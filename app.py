@@ -50,18 +50,19 @@ def register():
             return redirect(url_for('homepage'))
         return render_template('signup.jinja2')
     username = request.args.get('username')
-    if username is None:
-        return jsonify({'errors':'enter a username'})
     password = request.args.get('password')
-    if password is None:
-        return jsonify({'errors':'enter a password'})
     email = request.args.get('email')
-    if email is None:
-        return jsonify({'errors':'enter an email'})
     user = User.query.filter((User.username == username) | (User.email == email)).first()
     if user is not None:
         return jsonify({'errors':'user already exists'})
-    user = User(username=username, email=email)
+    firstname = request.args.get('firstname')
+    lastname = request.args.get('lastname')
+    university = request.args.get('university')
+    dob = request.args.get('dob')
+    major = request.args.get('major')
+    program = request.args.get('program')
+    user = User(username=username, email=email, firstname=firstname, lastname=lastname, university=university,
+                dob=dob, major=major, program=program)
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
