@@ -54,8 +54,8 @@
 					</div>
 
 					<div class="container-login100-form-btn p-t-10">
-						<button class="login100-form-btn">
-							Login
+						<button class="login100-form-btn" name="login">
+							Login<a href="{{ url_for('login') }}"></a>
 						</button>
 					</div>
 
@@ -66,7 +66,7 @@
 					</div>
 
 					<div class="text-center w-full">
-						<a class="txt1" href="#">
+						<a class="txt1" href="{{ url_for('register') }}">
 							Create new account
 							<i class="fa fa-long-arrow-right"></i>
 						</a>
@@ -76,7 +76,25 @@
 		</div>
 	</div>
 
+<script>
+$(document).ready(function() {
 
+    $('#login').click(function() {
+
+        $.ajax({
+            type: "POST",
+            url: 'login',
+            data: {
+                username: $("#username").val(),
+                password: $("#password").val()
+            }
+        });
+
+    });
+
+});
+
+</script>
 
 
 <!--===============================================================================================-->

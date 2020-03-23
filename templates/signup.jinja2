@@ -105,7 +105,7 @@
           </div>
 
 					<div class="container-login100-form-btn p-t-10">
-						<button class="login100-form-btn">
+						<button class="login100-form-btn" name="create">
 							Create account
 						</button>
 					</div>
@@ -115,7 +115,35 @@
 	</div>
 
 
+  <script>
+  $(document).ready(function() {
 
+      $('#create').click(function() {
+
+          $.ajax({
+              type: "POST",
+              url: 'register',
+              data: {
+                  username: $("#username").val(),
+                  password: $("#password").val(),
+                  agreementstatus: $("#agreementstatus").val(),
+                  confirm_password: $("#confirm_password").val(),
+                  program: $("#program").val(),
+                  major: $("#major").val(),
+                  dob: $("#dob").val(),
+                  university: $("#university").val(),
+                  email: $("#email").val(),
+                  lastname: $("#lastname").val(),
+                  firstname: $("#firstname").val(),
+                  username: $("#username").val()
+              }
+          });
+
+      });
+
+  });
+
+  </script>
 
 <!--===============================================================================================-->
 	<script src="static/vendor/jquery/jquery-3.2.1.min.js"></script>
