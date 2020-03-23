@@ -2,6 +2,7 @@ from flask import render_template, flash, redirect, url_for, request, Flask, jso
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user, logout_user, current_user, login_required, LoginManager
 from werkzeug.urls import url_parse
+from werkzeug.exceptions import BadRequest
 from config import Config
 
 app = Flask(__name__)
@@ -29,13 +30,13 @@ def login():
             return redirect(url_for('homepage'))
         return render_template('login.jinja2')
     
-    username = request.args.get('username')
-    password = request.args.get('password')
+    username = request.form.get('username')
+    password = request.form.get('password')
     user = User.query.filter_by(username=username).first()
     if user is None or not user.check_password(password):
         return jsonify({'errors':'invalid username/password'})
     login_user(user)
-    return redirect(url_for('homepage'))
+    return jsonify({})
 
 @app.route('/logout')
 def logout():
@@ -49,25 +50,25 @@ def register():
         if current_user.is_authenticated:
             return redirect(url_for('homepage'))
         return render_template('signup.jinja2')
-    username = request.args.get('username')
-    password = request.args.get('password')
-    email = request.args.get('email')
+    username = request.form.get('username')
+    password = request.form.get('password')
+    email = request.form.get('email')
     user = User.query.filter((User.username == username) | (User.email == email)).first()
     if user is not None:
         return jsonify({'errors':'user already exists'})
-    firstname = request.args.get('firstname')
-    lastname = request.args.get('lastname')
-    university = request.args.get('university')
-    dob = request.args.get('dob')
-    major = request.args.get('major')
-    program = request.args.get('program')
+    firstname = request.form.get('firstname')
+    lastname = request.form.get('lastname')
+    university = request.form.get('university')
+    dob = request.form.get('dob')
+    major = request.form.get('major')
+    program = request.form.get('program')
     user = User(username=username, email=email, firstname=firstname, lastname=lastname, university=university,
                 dob=dob, major=major, program=program)
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
     login_user(user)
-    return redirect(url_for('homepage'))
+    return jsonify({})
     
 
 @app.route('/homepage', methods=['GET', 'POST'])

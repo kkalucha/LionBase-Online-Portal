@@ -28,7 +28,7 @@
 	<div class="limiter">
 		<div class="container-login100" style="background-image: url('static/images/img-01.jpg');">
 			<div class="wrap-login100 p-t-190 p-b-30">
-				<form class="login100-form validate-form">
+				<form class="login100-form validate-form" onsubmit="return false;">
 					<div class="login100-form-avatar">
 						<img src="static/images/logo.png" alt="LOGO">
 					</div>
@@ -55,7 +55,7 @@
 
 					<div class="container-login100-form-btn p-t-10">
 						<button class="login100-form-btn" name="login">
-							Login<a href="{{ url_for('login') }}"></a>
+							Login
 						</button>
 					</div>
 
@@ -76,25 +76,6 @@
 		</div>
 	</div>
 
-<script>
-$(document).ready(function() {
-
-    $('#login').click(function() {
-
-        $.ajax({
-            type: "POST",
-            url: 'login',
-            data: {
-                username: $("#username").val(),
-                password: $("#password").val()
-            }
-        });
-
-    });
-
-});
-
-</script>
 
 
 <!--===============================================================================================-->
@@ -106,6 +87,27 @@ $(document).ready(function() {
 	<script src="static/vendor/select2/select2.min.js"></script>
 <!--===============================================================================================-->
 	<script src="static/js/main.js"></script>
+
+<script>
+$(document).ready(function() {
+    $("[name='login']").click(function() {
+        $.ajax({
+            type: 'POST',
+			method: 'POST',
+            url: '/login',
+            data: {
+                username: $("[name='username']").val(),
+                password: $("[name='password']").val()
+            },
+			success : function(response){ 
+				if (response.errors == null) location.href = "/homepage"; 
+				else $("[name='username']").val("stupid boy");
+			}
+        });
+    });
+});
+
+</script>
 
 </body>
 </html>
