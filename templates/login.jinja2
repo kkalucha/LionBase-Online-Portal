@@ -100,7 +100,7 @@ $(document).ready(function() {
                 password: $("[name='password']").val()
             },
 			success : function(response){ 
-				if (response.errors == null) location.href = "/homepage"; 
+				if (response.errors == null) window.location.href = "/homepage"; 
 				else $("[name='username']").val("stupid boy");
 			}
         });

@@ -146,7 +146,7 @@
                   username: $("[name='username']").val()
               },
 			  success:function(response){ 
-				if (response.errors == null) location.href = "/homepage"; 
+				if (response.errors == null) window.location.href = "/homepage";
 				else $("[name='firstname']").val("stupid boy");
 			  }
           });
