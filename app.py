@@ -18,7 +18,7 @@ login.login_view = 'login'
 ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'png', 'txt']
 client = boto3.client('s3')
 uploads_dir = 'uploads'
-
+VALID_MODULES = [1, 2, 3, 4, 5]
 from models import User
 
 @app.route('/')
@@ -87,10 +87,23 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/exercise/<module_number>')
+def valid_module(module_number):
+	return module_number in VALID_MODULES
 
+@app.route('/module/<module_number>')
+def module(module_number):
+	if not valid_module(module_number):
+		return jsonify({"errors": "invalid module number"})
+	module_dict = get_module_dict();
+	# Loops over each element's value (NOT the key) of given dict. Directly fed in to /
+	# the src of iframe.
+	return render_template('module.jinja2', module_dict=module_dict, module_number=module_number)
+
+
+
+@app.route('/exercise/<module_number>')
 def exercise(module_number):
-	if int(module_number) > 6:
+	if not valid_module(module_number):
 		return jsonify({"errors" : "invalid module number"})
 	#prompt = get_prompt()
 	prompt = "This is placeholder text"
