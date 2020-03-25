@@ -87,6 +87,16 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/exercise/<module_number>')
+
+def exercise(module_number):
+	if int(module_number) > 6:
+		return jsonify({"errors" : "invalid module number"})
+	#prompt = get_prompt()
+	prompt = "This is placeholder text"
+	return render_template('exercise.jinja2', module_number=module_number, prompt=prompt)
+
+
 @app.route('/submit', methods=['POST'])
 @login_required
 def submit_file():
