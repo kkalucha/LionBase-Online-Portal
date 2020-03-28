@@ -7,6 +7,7 @@ from werkzeug.exceptions import BadRequest
 from config import Config
 import boto3
 import os
+import copy
 
 app = Flask(__name__)
 
@@ -15,11 +16,22 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_view = 'login'
 
-ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'png', 'txt']
+ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'png', 'txt', 'py', 'ipynb']
 client = boto3.client('s3')
 uploads_dir = 'uploads'
-VALID_MODULES = [1, 2, 3, 4, 5]
+NUM_MODULES = 5
+
+modules = [{"name" : "Analytics",
+            "submodules": ["Supervised Machine Learning", "Unsupervised Machine Learning", "Optimization", "Miscellaneous"], 
+            "exercises": ["https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master"]}]
+
+submodules = [[["notebook/Linear Regression - Theory", "notebook/Linear Regression - Practical Case"], ["Databases - Theory.html", "Databases - Case.html"]], 
+              [], 
+              [], 
+              []]
+
 from models import User
+from models import Comment
 
 @app.route('/')
 @app.route('/index')
@@ -46,6 +58,7 @@ def login():
     return jsonify({})
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
@@ -69,8 +82,9 @@ def register():
     dob = request.form.get('dob')
     major = request.form.get('major')
     program = request.form.get('program')
-    user = User(username=username, email=email, firstname=firstname, lastname=lastname, university=university,
-                dob=dob, major=major, program=program)
+    user = User(username=username, email=email, firstname=firstname, lastname=lastname, university=university,\
+                dob=dob, major=major, program=program, completed=[False] * NUM_MODULES, \
+                locked = False + [True] * (NUM_MODULES - 1), hascomments = [False] * NUM_MODULES )
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
@@ -84,31 +98,32 @@ def homepage():
     return render_template('homepage.jinja2')
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def valid_module(module_number):
-	return module_number in VALID_MODULES
+    return module_number in VALID_MODULES
 
 @app.route('/module/<module_number>')
+@login_required
 def module(module_number):
-	if not valid_module(module_number):
-		return jsonify({"errors": "invalid module number"})
-	module_dict = get_module_dict();
-	# Loops over each element's value (NOT the key) of given dict. Directly fed in to /
-	# the src of iframe.
-	return render_template('module.jinja2', module_dict=module_dict, module_number=module_number)
+    if not valid_module(module_number):
+        return jsonify({"errors": "invalid module number"})
+    module_dict = copy.deepcopy(modules[module_number])
+    module_dict['completed'] = current_user.completed[module_number]
+    module_dict['locked'] = current_user.locked[module_number]
+    module_dict['hascomments'] = current_user.hascomments[module_number]
+    module_dict['comments'] = Comment.query.filter_by(username=current_user.username, module=module_number)
+    return render_template('module.jinja2', module=module_dict, module_number=module_number, username=current_user.username)
 
+@app.route('/submodule/<module_number>/<submodule_number>')
+@login_required
+def submodule(module_number, submodule_number):
+    return render_template('submodule.jinja2', module_number=module_number, submodule_number=submodule_number, submodule = submodules[module_number][submodule_number])
 
-
-@app.route('/exercise/<module_number>')
-def exercise(module_number):
-	if not valid_module(module_number):
-		return jsonify({"errors" : "invalid module number"})
-	#prompt = get_prompt()
-	prompt = "This is placeholder text"
-	return render_template('exercise.jinja2', module_number=module_number, prompt=prompt)
-
+@app.route('/notebook/<notebook_name>')
+@login_required
+def notebook(notebook_name):
+    return render_template("notebooks/" + notebook_name + ".html")
 
 @app.route('/submit', methods=['POST'])
 @login_required
@@ -120,7 +135,7 @@ def submit_file():
         return jsonify({"errors":"invalid file type"})
     filename = secure_filename(file.filename)
     file.save(os.path.join(uploads_dir, filename))
-    key = request.form.get("username") + "_" + request.form.get("module") + "_" + request.form.get("submodule") + "." + filename.rsplit('.', 1)[1].lower()
+    key = current_user.username + "_" + request.form.get("module") + "." + filename.rsplit('.', 1)[1].lower()
     client.upload_file(os.path.join(uploads_dir, filename), 'online-portal', key)
     return jsonify({})
     
