@@ -89,7 +89,9 @@ def allowed_file(filename):
 
 def valid_module(module_number):
 	return module_number in VALID_MODULES
-
+	
+# --------- I'm commenting starting here ---------- #
+'''
 @app.route('/module/<module_number>')
 def module(module_number):
 	if not valid_module(module_number):
@@ -108,6 +110,83 @@ def exercise(module_number):
 	#prompt = get_prompt()
 	prompt = "This is placeholder text"
 	return render_template('exercise.jinja2', module_number=module_number, prompt=prompt)
+'''
+# --------- I'm commenting ending here ---------- #
+
+@app.route('/modules/<module_number>')
+def module(module_number):
+    module = {"name": "Analytics",
+              "number" : "1",
+              "locked": False,
+                "submodules": [{"locked":False,"name" : "Supervised Machine Learning", "number" : "1.1", "description":"this is ML but supervised", "theory_url": "theory_url2", "case_url": "case_urlll"},
+        {"locked":False, "name" : "Unupervised Machine Learning", "number" : "1.2", "description":"ML but wait there be no supervision", "theory_url":"theory_url2", "case_url": "case_urlll"},
+        {"locked":True, "name" : "Optimisation", "number" : "1.3", "description": "now we optimise", "theory_url":"theory_url2", "case_url": "case_urlll"}],
+                "exercises": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master" }
+
+    return render_template('module.jinja2', module=module)
+
+@app.route('/notfound')
+def notfound():
+    return render_template('404notfound.jinja2')
+
+@app.route('/submodules/theory/<submodule_number>')
+def theory(submodule_number):
+    return render_template('submodule.jinja2', submodule_number=submodule_number, type="theory");
+
+@app.route('/submodules/case/<submodule_number>')
+def case(submodule_number):
+    return render_template('submodule.jinja2', submodule_number=submodule_number, type="case");
+
+@app.route('/modules')
+def modules():
+
+    all_modules = [
+         {"completed": "true",
+                    "locked": "false",
+                     "number": "1",
+                      "name": "capture / maintain / process",
+                      "submodules":["using an api", "databases", "datacleaning"],
+                      "exercises": ["module 1 - assignment.html"],
+                      "hascomments": "true",
+                      "comments":["great job", "keep up the good work"]},
+
+        {"completed": "true",
+                     "locked": "false",
+                     "number": "2",
+                     "name": "Analytics: Supervised Learning",
+                     "submodules": ["using an api", "databases", "datacleaning"],
+                     "exercises": ["module 1 - assignment.html"],
+                     "hascomments": "true",
+                     "comments": ["great job", "keep up the good work"]},
+
+         {"completed": "false",
+                     "locked": "false",
+                     "number": "3",
+                     "name": "Analytics: Unsupervised Learning",
+                     "submodules": ["using an api", "databases", "datacleaning"],
+                     "exercises": ["module 1 - assignment.html"],
+                     "hascomments": "true",
+                     "comments": ["great job", "keep up the good work"]},
+
+         {"completed": "true",
+                     "locked": "false",
+                     "number": "4",
+                     "name": "End Products",
+                     "submodules": ["using an api", "databases", "datacleaning"],
+                     "exercises": ["module 1 - assignment.html"],
+                     "hascomments": "true",
+                     "comments": ["great job", "keep up the good work"]},
+
+        {"completed": "true",
+         "locked": "false",
+         "number": "5",
+         "name": "Project Management",
+         "submodules": ["using an api", "databases", "datacleaning"],
+         "exercises": ["module 1 - assignment.html"],
+         "hascomments": "true",
+         "comments": ["great job", "keep up the good work"]}
+    ]
+    return render_template('modules.jinja2', all_modules=all_modules)
 
 
 @app.route('/submit', methods=['POST'])

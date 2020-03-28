@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Homepage</title>
+    <title>Submodule {{submodule_number}}</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
@@ -38,6 +38,7 @@
 		width: 60%; 
 		padding: 10px;
 	}
+	
 	.locked-overlay {
 		position: absolute;
 		top: 0px;
@@ -75,32 +76,10 @@
 		    </span>
 	</nav>
 	
-	<div class="container" style="width: 50%">
-		
-		<div class="announcements-container" style="display: block; margin: 25px 0px 25px;">
-			<img class="d-block w-100" src="/static/images/banner.png" alt="">
-		</div>
-		
-		<div class="modules-container">
-			{% for module in all_modules %}
-				<div class="module card flex-row flex-wrap margin-md">
-					<a name="{{module['number']}}"></a>
-					    <div class="thumbnail-container card-header border-0">
-					        <img src="/static/images/logo.png" alt="" style="max-width: 100%; max-height: 100%;">
-					    </div>
-					    <div class="text-container card-block px-2">
-					        <h4 class="card-title">Module {{module['number']}}: {{module["name"]}}</h4>
-					        <p class="card-text">{{module["description"]}}</p>
-							<div class="margin-md">
-					            <a href="/modules/{{module['number']}}" class="btn btn-primary {{'disabled' if not module['completed']}}">Get Started</a>
-					        </div>
-					    </div>
-					        {{"<div class='locked-overlay'><i class='fas fa-lock'></i></div>" if module["locked"]}}
-	    				</div>
-    				{% endfor %}
-				</div>
+	<div class="embed-responsive embed-responsive-16by9">
+		<iframe src="/templates/notebooks/{{submodule_number}}_{{type}}.html" alt=""> </iframe>
 	</div>
-
-  
+	
   </body>
 </html>
+
