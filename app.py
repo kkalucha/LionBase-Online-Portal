@@ -53,6 +53,7 @@ modules = [{"name" : "Analytics", "number" : "1", "description" : "this is the d
 
 from models import User
 from models import Comment
+from models import Submission
 
 def get_user_module(module_number):
     module_dict = copy.deepcopy(modules[module_number])
@@ -123,11 +124,8 @@ def register():
     dob = request.form.get('dob')
     major = request.form.get('major')
     program = request.form.get('program')
-    locked = [([False] + [True] * (MAX_SUBMODULES - 1))] + [ ([True] * MAX_SUBMODULES) for i in range(NUM_MODULES - 1) ]
     user = User(username=username, email=email, firstname=firstname, lastname=lastname, university=university,\
-                dob=dob, major=major, program=program, completed=[False] * NUM_MODULES,\
-                locked=([False] + [True] * (NUM_MODULES - 1)), hascomments=[False] * NUM_MODULES,\
-                locked_sub=locked, current_module=0)
+                dob=dob, major=major, program=program)
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
@@ -163,6 +161,8 @@ def modules_route():
 def module(module_number):
     if not allowed_module(module_number - 1):
         abort(404)
+    current_user.current_module = module_number - 1
+    db.session.commit()
     return render_template('module.jinja2', module=get_user_module(module_number - 1))
 
 @app.route('/modules/<int:module_number>/<int:submodule_number>/<kind>')
@@ -170,6 +170,8 @@ def module(module_number):
 def submodule(module_number, submodule_number, kind):
     if not allowed_submodule(module_number - 1, submodule_number - 1):
         abort(404)
+    current_user.current_module = module_number - 1
+    db.session.commit()
     return render_template('submodule.jinja2', module_number=module_number, submodule_number=submodule_number, kind=kind)
 
 
@@ -189,9 +191,11 @@ def complete(module_number, submodule_number):
         db.session.commit()
     return redirect('/modules/' + str(module_number))
 
-@app.route('/submit', methods=['POST'])
+@app.route('/submit/<int:module_number>', methods=['POST'])
 @login_required
-def submit_file():
+def submit_file(module_number):
+    if not allowed_module(module_number - 1):
+        abort(404)
     file = request.files.get('file')
     if not file or file.filename == '':
         return jsonify({"errors":"no file attached"})
@@ -199,8 +203,11 @@ def submit_file():
         return jsonify({"errors":"invalid file type"})
     filename = secure_filename(file.filename)
     file.save(os.path.join(uploads_dir, filename))
-    key = current_user.username + "_" + request.form.get("module") + "." + filename.rsplit('.', 1)[1].lower()
+    key = current_user.username + "_" + str(module_number) + "." + filename.rsplit('.', 1)[1].lower()
     client.upload_file(os.path.join(uploads_dir, filename), 'online-portal', key)
+    uploaded = Submission(username=current_user.username, module=module_number-1, key=key)
+    db.session.add(uploaded)
+    db.session.commit()
     return jsonify({})
 
 @app.errorhandler(404)
