@@ -160,7 +160,7 @@ def module(module_number):
 @app.route('/modules/<int:module_number>/<int:submodule_number>/<kind>')
 @login_required
 def submodule(module_number, submodule_number, kind):
-    if module_number < 1 or module_number > NUM_MODULES or submodule_number < 1 or submodule_number > NUM_SUBMODULES[module_number - 1]/
+    if module_number < 1 or module_number > NUM_MODULES or submodule_number < 1 or submodule_number > NUM_SUBMODULES[module_number - 1]\
     or current_user.locked_sub[module_number - 1][submodule_number - 1]:
         abort(404)
     return render_template('submodule.jinja2', module_number=module_number, submodule_number=submodule_number, kind=kind)
