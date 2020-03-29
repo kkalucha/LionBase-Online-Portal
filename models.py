@@ -16,9 +16,11 @@ class User(UserMixin, db.Model):
     dob = db.Column(db.Integer)
     major = db.Column(db.String(100))
     program = db.Column(db.String(50))
-    completed = db.Column(db.ARRAY(db.Boolean(), dimensions=5))
-    locked = db.Column(db.ARRAY(db.Boolean(), dimensions=5))
-    hascomments = db.Column(db.ARRAY(db.Boolean(), dimensions=5))
+    completed = db.Column(db.ARRAY(db.Boolean(), dimensions=1))
+    locked = db.Column(db.ARRAY(db.Boolean(), dimensions=1))
+    locked_sub = db.Column(db.ARRAY(db.Boolean(), dimensions=2))
+    hascomments = db.Column(db.ARRAY(db.Boolean(), dimensions=1))
+    current_module = db.Column(db.Integer)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
