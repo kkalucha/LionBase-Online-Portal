@@ -7,22 +7,22 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
-	<link rel="icon" type="image/png" href="static/images/icons/favicon.ico"/>
+	<link rel="icon" type="image/png" href="/static/images/logo.png" type="image/x-icon">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="static/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap/css/bootstrap.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="static/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="static/vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/animate/animate.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="static/vendor/css-hamburgers/hamburgers.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/css-hamburgers/hamburgers.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="static/vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/vendor/select2/select2.min.css">
 <!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="static/css/util.css">
-	<link rel="stylesheet" type="text/css" href="static/css/main.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
 <!--===============================================================================================-->
 </head>
 
@@ -46,6 +46,22 @@
 
 	.margin-md-v {
 		margin: 10px 0px 10px;
+	}
+
+	.module img {
+		max-height: 100%;
+		max-width: 100%; 
+	}
+
+	.module .thumbnail-container {
+		display: inline-block; width: 30%
+	}
+
+	.module .text-container {
+		position: relative;
+		display: inline-block; 
+		width: 60%; 
+		padding: 10px;
 	}
 
 	.locked-overlay {
@@ -121,9 +137,7 @@
 	<script>
 		// Enable popovers
 		$(document).ready(() => {
-			$(() => {
-  				$('[data-toggle="popover"]').popover();
-			});
+			$('[data-toggle="popover"]').popover();
 
 			$(".navbar a").on("click", () => {
    				$(".navbar").find("li.active").removeClass("active");
