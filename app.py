@@ -51,7 +51,7 @@ def login():
     
     username = request.form.get('username')
     password = request.form.get('password')
-    user = User.query.filter_by(username=username).first()
+    user = models.User.query.filter_by(username=username).first()
     if user is None or not user.check_password(password):
         return jsonify({'errors':'invalid username/password'})
     login_user(user)
@@ -73,7 +73,7 @@ def register():
     username = request.form.get('username')
     password = request.form.get('password')
     email = request.form.get('email')
-    user = User.query.filter((User.username == username) | (User.email == email)).first()
+    user = models.User.query.filter((User.username == username) | (User.email == email)).first()
     if user is not None:
         return jsonify({'errors':'user already exists'})
     firstname = request.form.get('firstname')
@@ -93,9 +93,18 @@ def register():
     
 
 @app.route('/homepage', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def homepage():
-    return render_template('homepage.jinja2')
+    ann = {"title": "Program Kickoff", "description": "Join us on Zoom for our first bonding event! Meet other students in the program."}
+    #progress in terms of percent
+    progress = 25
+    modules = {
+            "prev": {"completed": True, "number": 2.2, "name": "javascript basics", "description": "APIs, databases (SQL, NoSQL, GraphQL), queries, foreign key constraints, inheritance, ACID properties", "tutorial": "tutorial", "hascomments": True, "comments": ["great job", "keep up the good work"]},
+            "curr": {"completed": False, "number": 2.3, "name": "machine learning basics", "description": "APIs, databases (SQL, NoSQL, GraphQL), queries, foreign key constraints, inheritance, ACID properties", "tutorial": "tutorial", "hascomments": True, "comments": ["great job", "keep up the good work"]},
+            "next": {"completed": False, "number": 2.4, "name": "product management basics", "description": "APIs, databases (SQL, NoSQL, GraphQL), queries, foreign key constraints, inheritance, ACID properties", "tutorial": "tutorial", "hascomments": True, "comments": ["great job", "keep up the good work"]}
+        }
+
+    return render_template('homepage.jinja2', ann=ann, progress=progress, prev=modules["prev"], curr=modules["curr"], next=modules["next"])
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -103,6 +112,7 @@ def allowed_file(filename):
 def valid_module(module_number):
     return module_number in VALID_MODULES
 
+<<<<<<< HEAD
 @app.route('/module/<module_number>')
 @login_required
 def module(module_number):
@@ -119,6 +129,78 @@ def module(module_number):
 @login_required
 def submodule(module_number, submodule_number):
     return render_template('submodule.jinja2', module_number=module_number, submodule_number=submodule_number, submodule = submodules[module_number][submodule_number])
+=======
+@app.route('/modules/<module_number>')
+def module(module_number):
+    module = {"name": "Analytics",
+              "number" : "1",
+              "locked": False,
+                "submodules": [{"locked":False,"name" : "Supervised Machine Learning", "number" : "1.1", "description":"this is ML but supervised", "theory_url": "theory_url2", "case_url": "case_urlll"},
+        {"locked":False, "name" : "Unupervised Machine Learning", "number" : "1.2", "description":"ML but wait there be no supervision", "theory_url":"theory_url2", "case_url": "case_urlll"},
+        {"locked":True, "name" : "Optimisation", "number" : "1.3", "description": "now we optimise", "theory_url":"theory_url2", "case_url": "case_urlll"}],
+                "exercises": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master" }
+
+    return render_template('module.jinja2', module=module)
+
+@app.route('/submodules/theory/<submodule_number>')
+def theory(submodule_number):
+    return render_template('submodule.jinja2', submodule_number=submodule_number, type="theory");
+
+@app.route('/submodules/case/<submodule_number>')
+def case(submodule_number):
+    return render_template('submodule.jinja2', submodule_number=submodule_number, type="case");
+
+@app.route('/modules')
+def modules():
+
+    all_modules = [
+         {"completed": "true",
+                    "locked": "false",
+                     "number": "1",
+                      "name": "capture / maintain / process",
+                      "submodules":["using an api", "databases", "datacleaning"],
+                      "exercises": ["module 1 - assignment.html"],
+                      "hascomments": "true",
+                      "comments":["great job", "keep up the good work"]},
+
+        {"completed": "true",
+                     "locked": "false",
+                     "number": "2",
+                     "name": "Analytics: Supervised Learning",
+                     "submodules": ["using an api", "databases", "datacleaning"],
+                     "exercises": ["module 1 - assignment.html"],
+                     "hascomments": "true",
+                     "comments": ["great job", "keep up the good work"]},
+
+         {"completed": "false",
+                     "locked": "false",
+                     "number": "3",
+                     "name": "Analytics: Unsupervised Learning",
+                     "submodules": ["using an api", "databases", "datacleaning"],
+                     "exercises": ["module 1 - assignment.html"],
+                     "hascomments": "true",
+                     "comments": ["great job", "keep up the good work"]},
+
+         {"completed": "true",
+                     "locked": "false",
+                     "number": "4",
+                     "name": "End Products",
+                     "submodules": ["using an api", "databases", "datacleaning"],
+                     "exercises": ["module 1 - assignment.html"],
+                     "hascomments": "true",
+                     "comments": ["great job", "keep up the good work"]},
+
+        {"completed": "true",
+         "locked": "false",
+         "number": "5",
+         "name": "Project Management",
+         "submodules": ["using an api", "databases", "datacleaning"],
+         "exercises": ["module 1 - assignment.html"],
+         "hascomments": "true",
+         "comments": ["great job", "keep up the good work"]}
+    ]
+    return render_template('modules.jinja2', all_modules=all_modules)
+>>>>>>> origin/submodules
 
 @app.route('/notebook/<notebook_name>')
 @login_required
@@ -138,4 +220,14 @@ def submit_file():
     key = current_user.username + "_" + request.form.get("module") + "." + filename.rsplit('.', 1)[1].lower()
     client.upload_file(os.path.join(uploads_dir, filename), 'online-portal', key)
     return jsonify({})
+<<<<<<< HEAD
     
+=======
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('page-not-found.jinja2')
+    
+if __name__ == "__main__":
+   app.run(debug = True)
+>>>>>>> origin/submodules

@@ -1,20 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Module {{ module_number }}</title>
+{% extends "layout.jinja2" %}
 
-	<link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+{% block title %}
+<title>Module</title>
+{% endblock %}
+
+{% block style %}  
 <style>
-body {
-    font-family: 'Montserrat';font-size: 18px;
-}
-
-</head>
-<body>
-	<h>Welcome to module {{ module number }}! Please go through the following content carefully.</h>
-	{% for element in module_dict.values() %}
-		<iframe src={{element}} ></iframe>
-	{% endfor %}
-</body>
-</html>
+</style>
+{% endblock %}
+  
+{% block content %}		
+{% for submodule in module['submodules'] %}
+<div class="module card flex-row flex-wrap margin-md-v">
+	<a name="{{submodule['number']}}"></a>
+    <div class="thumbnail-container card-header border-0">
+        <h4 class="card-title" style="font: 20pt">{{submodule['number']}}: {{submodule["name"]}}</h4>
+    </div>
+    <div class="text-container card-block px-2">
+        <p class="card-text" style="font: 14pt">{{submodule["description"]}}</p>
+		<div class="margin-md-v">
+            <a href="/submodules/theory/{{submodule['number']}}" class="btn btn-primary {{'disabled' if module['locked']}}">Theory</a>
+        </div>
+        <div class="margin-md-v">
+            <a href="/submodules/case/{{submodule['number']}}" class="btn btn-primary {{'disabled' if module['locked']}}">Case</a>
+        </div>
+    </div>
+    {{"<div class='locked-overlay'><i class='fas fa-lock'></i></div>" if submodule["locked"]}}
+</div>
+{% endfor %}
+	
+<div class="card text-center">
+	<div class="card-header">
+		Ready to test your skills? Click below!
+	</div>
+	<div class="card-body">
+	<p class="card-text">
+		This link will take you to a live jupyter notebook. Feel free to partner up to solve the tasks, but mention them in your submission
+	</p>
+	<a href="{{module['exercises']}}" class="btn btn-primary">Go to Assignment</a>
+	</div>
+</div>
+{% endblock %}
