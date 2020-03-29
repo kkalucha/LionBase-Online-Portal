@@ -1,0 +1,16 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}
+<title>Submodule {{submodule_number}}</title>
+{% endblock %}
+
+{% block style %}
+<style>
+</style>
+{% endblock %}
+  
+{% block content %}
+<div class="embed-responsive embed-responsive-16by9">
+	<iframe src="/notebook/{{module_number}}_{{submodule_number}}_{{kind}}.html"></iframe>
+</div>
+{% endblock %}
