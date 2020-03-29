@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request, Flask, jsonify
+from flask import render_template, flash, redirect, url_for, request, Flask, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user, logout_user, current_user, login_required, LoginManager
 from werkzeug.utils import secure_filename
@@ -7,6 +7,7 @@ from werkzeug.exceptions import BadRequest
 from config import Config
 import boto3
 import os
+import copy
 
 app = Flask(__name__)
 
@@ -15,11 +16,55 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_view = 'login'
 
-ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'png', 'txt']
+ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'png', 'txt', 'py', 'ipynb']
 client = boto3.client('s3')
 uploads_dir = 'uploads'
-VALID_MODULES = [1, 2, 3, 4, 5]
+NUM_MODULES = 5
+MAX_SUBMODULES = 5
+NUM_SUBMODULES = [5, 3, 5, 2, 1]
+
+modules = [{"name" : "Analytics", "number" : "1", "description" : "this is the description", 
+            "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
+            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
+                           {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"},
+                           {"name" : "supervised machine learning", "number" : "3", "description" : "this is third one"},
+                           {"name" : "supervised machine learning", "number" : "4", "description" : "this is fourth one"},
+                           {"name" : "supervised machine learning", "number" : "5", "description" : "this is fifth one"}]},
+            {"name" : "Analytics", "number" : "2", "description" : "this is the description", 
+            "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
+            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
+                           {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"},
+                           {"name" : "supervised machine learning", "number" : "3", "description" : "this is third one"}]},
+            {"name" : "Analytics", "number" : "3", "description" : "this is the description", 
+            "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
+            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
+                           {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"},
+                           {"name" : "supervised machine learning", "number" : "3", "description" : "this is third one"},
+                           {"name" : "supervised machine learning", "number" : "4", "description" : "this is fourth one"},
+                           {"name" : "supervised machine learning", "number" : "5", "description" : "this is fifth one"}]},
+            {"name" : "Analytics", "number" : "4", "description" : "this is the description", 
+            "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
+            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
+                           {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"}]},
+            {"name" : "Analytics", "number" : "5", "description" : "this is the description", 
+            "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
+            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"}]}]
+
 from models import User
+from models import Comment
+
+def get_user_module(module_number):
+    module_dict = copy.deepcopy(modules[module_number])
+    module_dict['locked'] = current_user.locked[module_number]
+    module_dict['hascomments'] = current_user.hascomments[module_number]
+    if module_dict['hascomments']:
+        module_dict['comments'] = Comment.query.filter_by(username=current_user.username, module=module_number)
+    for i in range(NUM_SUBMODULES[module_number]):
+        module_dict['submodules'][i]['locked'] = current_user.locked_sub[module_number][i]
+    return module_dict
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/')
 @app.route('/index')
@@ -46,6 +91,7 @@ def login():
     return jsonify({})
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
@@ -69,46 +115,60 @@ def register():
     dob = request.form.get('dob')
     major = request.form.get('major')
     program = request.form.get('program')
-    user = User(username=username, email=email, firstname=firstname, lastname=lastname, university=university,
-                dob=dob, major=major, program=program)
+    locked = [([False] + [True] * (MAX_SUBMODULES - 1))] + [ ([True] * MAX_SUBMODULES) for i in range(NUM_MODULES) ]
+    user = User(username=username, email=email, firstname=firstname, lastname=lastname, university=university,\
+                dob=dob, major=major, program=program, completed=[False] * NUM_MODULES,\
+                locked=([False] + [True] * (NUM_MODULES - 1)), hascomments=[False] * NUM_MODULES,\
+                locked_sub=locked, current_module=0)
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
     login_user(user)
     return jsonify({})
     
-
 @app.route('/homepage', methods=['GET', 'POST'])
 @login_required
 def homepage():
-    return render_template('homepage.jinja2')
+    ann = {"title": "Program Kickoff", "description": "Join us on Zoom for our first bonding event! Meet other students in the program."}
+    module_dict = get_user_module(current_user.current_module)
+    cur = 0
+    for i in range(NUM_SUBMODULES[current_user.current_module]):
+        if module_dict['submodules'][i]['locked']:
+            cur = i
+            break
+    progress = int(100 * (sum(NUM_SUBMODULES[0:current_user.current_module], cur)/sum(NUM_SUBMODULES)))
+    prev = None
+    if current_user.current_module > 0:
+        prev = get_user_module(current_user.current_module - 1)
+    nex = None
+    if current_user.current_module < NUM_MODULES - 1:
+        nex = get_user_module(current_user.current_module + 1)
+    return render_template('homepage.jinja2', ann=ann, progress=progress, prev=prev, curr=module_dict, next=nex)
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+@app.route('/modules')
+@login_required
+def modules_route():
+    return render_template('modules.jinja2', all_modules=[get_user_module(i) for i in range(NUM_MODULES)])
 
-def valid_module(module_number):
-	return module_number in VALID_MODULES
-
-@app.route('/module/<module_number>')
+@app.route('/modules/<int:module_number>')
+@login_required
 def module(module_number):
-	if not valid_module(module_number):
-		return jsonify({"errors": "invalid module number"})
-	module_dict = get_module_dict();
-	# Loops over each element's value (NOT the key) of given dict. Directly fed in to /
-	# the src of iframe.
-	return render_template('module.jinja2', module_dict=module_dict, module_number=module_number)
+    if current_user.locked[module_number - 1]:
+        abort(404)
+    return render_template('module.jinja2', module=get_user_module(module_number - 1))
+
+@app.route('/modules/<int:module_number>/<int:submodule_number>/<kind>')
+@login_required
+def submodule(module_number, submodule_number, kind):
+    if current_user.locked_sub[module_number - 1][submodule_number - 1]:
+        abort(404)
+    return render_template('submodule.jinja2', module_number=module_number, submodule_number=submodule_number, kind=kind)
 
 
-
-@app.route('/exercise/<module_number>')
-def exercise(module_number):
-	if not valid_module(module_number):
-		return jsonify({"errors" : "invalid module number"})
-	#prompt = get_prompt()
-	prompt = "This is placeholder text"
-	return render_template('exercise.jinja2', module_number=module_number, prompt=prompt)
-
+@app.route('/notebook/<notebook_name>')
+@login_required
+def notebook(notebook_name):
+    return render_template("notebooks/" + notebook_name)
 
 @app.route('/submit', methods=['POST'])
 @login_required
@@ -120,7 +180,13 @@ def submit_file():
         return jsonify({"errors":"invalid file type"})
     filename = secure_filename(file.filename)
     file.save(os.path.join(uploads_dir, filename))
-    key = request.form.get("username") + "_" + request.form.get("module") + "_" + request.form.get("submodule") + "." + filename.rsplit('.', 1)[1].lower()
+    key = current_user.username + "_" + request.form.get("module") + "." + filename.rsplit('.', 1)[1].lower()
     client.upload_file(os.path.join(uploads_dir, filename), 'online-portal', key)
     return jsonify({})
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('page-not-found.jinja2')
     
+if __name__ == "__main__":
+   app.run(debug = True)

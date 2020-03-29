@@ -16,6 +16,11 @@ class User(UserMixin, db.Model):
     dob = db.Column(db.Integer)
     major = db.Column(db.String(100))
     program = db.Column(db.String(50))
+    completed = db.Column(db.ARRAY(db.Boolean(), dimensions=1))
+    locked = db.Column(db.ARRAY(db.Boolean(), dimensions=1))
+    locked_sub = db.Column(db.ARRAY(db.Boolean(), dimensions=2))
+    hascomments = db.Column(db.ARRAY(db.Boolean(), dimensions=1))
+    current_module = db.Column(db.Integer)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -26,7 +31,16 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String())
+    comment = db.Column(db.String())
+    module = db.Column(db.Integer)
+
+    def __repr__(self):
+        return self.comment

@@ -11,57 +11,29 @@
 		top: 0px; 
 		right: 10px;
 	}
-<<<<<<< HEAD
-
-=======
->>>>>>> module_page
 	.ann-container i {
 		font-size: 25px;
 		color: white;
 	}
-<<<<<<< HEAD
-
 	.margin-lg-v {
 		margin: 25px 0px 25px;
 	}
-
-=======
-	.margin-lg-v {
-		margin: 25px 0px 25px;
-	}
->>>>>>> module_page
 	.center-v {
 		display: inline-flex;
 		flex-direction: column;
 		justify-content: center;
 	}
-<<<<<<< HEAD
-
-=======
->>>>>>> module_page
 	.module img {
 		max-height: 100%;
 		max-width: 100%; 
 	}
-<<<<<<< HEAD
-
 	.card-block {
 		padding: 10px;
 	}
-
-=======
-	.card-block {
-		padding: 10px;
-	}
->>>>>>> module_page
 	.module.curr {
 		box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
 		transition: all 0.25s ease-in-out;
 	}
-<<<<<<< HEAD
-
-=======
->>>>>>> module_page
 	.module.curr:hover {
 	  transform: scale(1.01, 1.01);
 	  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
@@ -70,19 +42,6 @@
 {% endblock %}
 
 {% block content %}
-<<<<<<< HEAD
-<!-- <ul class="nav flex-column" style="width: 250px; position: fixed;">
-	Outline
-	{% for module in all_modules %}
-  	<li class="nav-item">
-    	<a class="nav-link active" href="#">Active</a>
-    	<a class="nav-link" href="#{{module['number']}}">{{module["number"]}}: {{module["name"]}}</a>
-  	</li>
-  	{% endfor %}
-</ul> -->
-
-=======
->>>>>>> module_page
 <h3 class="margin-lg-v">Your Certification Progress</h3>
 
 <div class="ann-container">
@@ -119,17 +78,10 @@
 	            <img src="/static/images/logo.png">
 	        </div>
 	        <div class="card-block px-2">
-<<<<<<< HEAD
-	            <h4 class="card-title">Module {{curr["number"]}}: {{curr["name"]}}</h4>
-	            <p class="card-text">{{curr["description"]}}</p>
-				<div class="margin-md-v">
-	            	<a href="#" class="btn btn-primary">Get Started</a>
-=======
 	            <h4 class="card-title">Module {{curr['number']}}: {{curr['name']}}</h4>
 	            <p class="card-text">{{curr['description']}}</p>
 				<div class="margin-md-v">
 	            	<a href="/modules/{{curr['number']}}" class="btn btn-primary">Get Started</a>
->>>>>>> module_page
 	            </div>
 	        </div>
 		</div>
@@ -140,17 +92,10 @@
       	<div class="module card">
 	        <a name="{{next['number']}}"></a>
 	        <div class="card-block px-2">
-<<<<<<< HEAD
-	            <h4 class="card-title">Module {{next["number"]}}: {{next["name"]}}</h4>
-	            <p class="card-text">{{next["description"]}}</p>
-				<div class="margin-md">
-	            	<a href="#" class="btn btn-primary">Get Started</a>
-=======
 	            <h4 class="card-title">Module {{next['number']}}: {{next['name']}}</h4>
 	            <p class="card-text">{{next['description']}}</p>
 				<div class="margin-md">
 	            	<a href="/modules/{{next['number']}}" class="btn btn-primary">Get Started</a>
->>>>>>> module_page
 	            </div>
 	        </div>
 	        <div class="locked-overlay">
