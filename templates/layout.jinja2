@@ -31,64 +31,23 @@
 		scroll-behavior: smooth;
 	}
 
-<<<<<<< HEAD
-	/*Change Bootstrap primary color to LionBase theme color*/
-	.btn-primary, .btn-primary.disabled, .progress-bar {
-		background: #84dbce;
-		border: #84dbce;
-	}
-
-	.btn-primary:hover {
-		background: #76c5b9;
-		border: #76c5b9;
-	}
-
-	.btn-outline-primary {
-		color: #84dbce;
-		border: #84dbce;
-	}
-
-	.btn-outline-primary:hover {
-		color: #76c5b9;
-		border: #76c5b9;
-	}
-	/*Change Bootstrap primary color to LionBase theme color*/
-
-=======
->>>>>>> module_page
 	.container {
 		position: relative;
 		min-height: 100vh;
 	}
 
 	.navbar {
-<<<<<<< HEAD
-		background: #84dbce;
-	}
-
-	.navlink:active {
-		color: white;
-	}
-
-	.navbar img {
-		display: inline;
-		height: 25px;
-		width: 25px;
-=======
 		background: #84dbce !important;
 	}
 
 	.navlink.active {
 		color: dodgerblue;
->>>>>>> module_page
 	}
 
 	.margin-md-v {
 		margin: 10px 0px 10px;
 	}
 
-<<<<<<< HEAD
-=======
 	.module img {
 		max-height: 100%;
 		max-width: 100%; 
@@ -105,7 +64,6 @@
 		padding: 10px;
 	}
 
->>>>>>> module_page
 	.locked-overlay {
 		position: absolute;
 		top: 0px;
@@ -134,23 +92,13 @@
 {% endblock %}
 
 <body>
-<<<<<<< HEAD
-	<nav class="navbar navbar-expand-lg navbar-light">
-	  	<span class="navbar-brand" href="#">
-	  		<img src="/static/images/logo.png">
-=======
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
 	  	<span class="navbar-brand" href="#">
->>>>>>> module_page
 	  		LionBase Certificate Program
 	  	</span>
 	  	<div class="collapse navbar-collapse">
 	    	<ul class="navbar-nav mr-auto">
-<<<<<<< HEAD
-		      	<li class="nav-item">
-=======
 		      	<li class="nav-item active">
->>>>>>> module_page
 		        	<a class="nav-link" href="/homepage">Home</a>
 		      	</li>
 		      	<li class="nav-item">
@@ -189,16 +137,11 @@
 	<script>
 		// Enable popovers
 		$(document).ready(() => {
-<<<<<<< HEAD
-			$(() => {
-  				$('[data-toggle="popover"]').popover();
-=======
 			$('[data-toggle="popover"]').popover();
 
 			$(".navbar a").on("click", () => {
    				$(".navbar").find("li.active").removeClass("active");
    				$(this).parent("li").addClass("active");
->>>>>>> module_page
 			});
 		});
 	</script>
