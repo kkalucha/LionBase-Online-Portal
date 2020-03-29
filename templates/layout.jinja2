@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Homepage</title>
+	{% block title %}
+	<title>Layout</title>
+	{% endblock %}
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
@@ -24,33 +26,22 @@
 <!--===============================================================================================-->
 </head>
 
-{% block style %}
 <style>
 	html {
 		scroll-behavior: smooth;
+	}
+
+	.container {
+		position: relative;
+		min-height: 100vh;
 	}
 
 	.navlink.active {
 		color: dodgerblue;
 	}
 
-	.modules-container {
-		margin: 25px 0px 25px;
-	}
-
-	.margin-md {
+	.margin-md-v {
 		margin: 10px 0px 10px;
-	}
-
-	.module .thumbnail-container {
-		display: inline-block; width: 30%
-	}
-
-	.module .text-container {
-		position: relative;
-		display: inline-block; 
-		width: 60%; 
-		padding: 10px;
 	}
 
 	.locked-overlay {
@@ -62,7 +53,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		background: rgba(245, 245, 245, .5);
+		background: rgba(245, 245, 245, .75);
 	}
 
 	.locked-overlay i {
@@ -71,37 +62,39 @@
 	}
 
 	.footer {
+		width: 100%;
 		background: #f8f9fa;
 		text-align: center;
 		padding: 25px 0px 25px;
 	}
 </style>
+{% block style %}
 {% endblock %}
 
 <body>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-	  	<a class="navbar-brand" href="#">LionBase Certificate Program</a>
-	  	<!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-	    	<span class="navbar-toggler-icon"></span>
-	  	</button> -->
-
-	  	<!-- <div class="collapse navbar-collapse" id="navbarSupportedContent"> -->
+	  	<span class="navbar-brand" href="#">
+	  		LionBase Certificate Program
+	  	</span>
+	  	<div class="collapse navbar-collapse">
 	    	<ul class="navbar-nav mr-auto">
 		      	<li class="nav-item active">
-		        	<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+		        	<a class="nav-link" href="/homepage">Home</a>
 		      	</li>
 		      	<li class="nav-item">
-		        	<a class="nav-link" href="#">Announcements</a>
+		        	<a class="nav-link" href="/modules">Modules</a>
+		      	</li>
+		      	<li class="nav-item">
+		        	<a class="nav-link" href="/announcements">Announcements</a>
 		      	</li>
 	      	</ul>
 	      	<span class="my-2 my-lg-0">
 		      	<a class="nav-link" href="/login">Log Out</a>
 		    </span>
-	  	<!-- </div> -->
+	  	</div>
 	</nav>
 
-
-	<div class="content">
+	<div class="container">
 		{% block content %}
 		{% endblock %}
 	</div>
@@ -121,6 +114,19 @@
 <!--===============================================================================================-->
 	<script src="static/js/main.js"></script>
 	<script src="https://kit.fontawesome.com/0f7cc584c9.js"></script>
+	<script>
+		// Enable popovers
+		$(document).ready(() => {
+			$(() => {
+  				$('[data-toggle="popover"]').popover();
+			});
+
+			$(".navbar-nav a").on("click", () => {
+   				$(".navbar-nav").find("li.active").removeClass("active");
+   				$(this).parent("li").addClass("active");
+			});
+		});
+	</script>
 
 </body>
 </html>
