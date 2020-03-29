@@ -1,0 +1,38 @@
+{% extends "layout.jinja2" %}
+
+{% block style %}
+<style>
+	.error-template {
+		padding: 40px 15px;text-align: center;
+	}
+	.error-actions {
+		margin-top:15px;margin-bottom:15px;
+	}
+	.error-actions .btn {
+		margin-right:10px; 
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+  		<div class="error-template">
+  			<div>
+  				<img src="/static/images/logo.png">
+  			</div>
+       		<h1>Oops, Page Not Found!</h2>
+      		<div class="error-actions">
+          		<a href="/homepage" class="btn btn-primary btn-lg">
+          			<i class="fas fa-home"></i>
+               		Take Me Home 
+               	</a>
+               	<a href="/support" class="btn btn-light btn-lg">
+               		<i class="fas fa-envelope"></i>
+               		Contact Support 
+               	</a>
+       		</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
