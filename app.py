@@ -15,11 +15,15 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_view = 'login'
 
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
 ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'png', 'txt']
 client = boto3.client('s3')
 uploads_dir = 'uploads'
 VALID_MODULES = [1, 2, 3, 4, 5]
-from models import User
+import models
 
 @app.route('/')
 @app.route('/index')
@@ -39,7 +43,7 @@ def login():
     
     username = request.form.get('username')
     password = request.form.get('password')
-    user = User.query.filter_by(username=username).first()
+    user = models.User.query.filter_by(username=username).first()
     if user is None or not user.check_password(password):
         return jsonify({'errors':'invalid username/password'})
     login_user(user)
@@ -60,7 +64,7 @@ def register():
     username = request.form.get('username')
     password = request.form.get('password')
     email = request.form.get('email')
-    user = User.query.filter((User.username == username) | (User.email == email)).first()
+    user = models.User.query.filter((User.username == username) | (User.email == email)).first()
     if user is not None:
         return jsonify({'errors':'user already exists'})
     firstname = request.form.get('firstname')
@@ -79,9 +83,18 @@ def register():
     
 
 @app.route('/homepage', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def homepage():
-    return render_template('homepage.jinja2')
+    ann = {"title": "Program Kickoff", "description": "Join us on Zoom for our first bonding event! Meet other students in the program."}
+    #progress in terms of percent
+    progress = 25
+    modules = {
+            "prev": {"completed": True, "number": 2.2, "name": "javascript basics", "description": "APIs, databases (SQL, NoSQL, GraphQL), queries, foreign key constraints, inheritance, ACID properties", "tutorial": "tutorial", "hascomments": True, "comments": ["great job", "keep up the good work"]},
+            "curr": {"completed": False, "number": 2.3, "name": "machine learning basics", "description": "APIs, databases (SQL, NoSQL, GraphQL), queries, foreign key constraints, inheritance, ACID properties", "tutorial": "tutorial", "hascomments": True, "comments": ["great job", "keep up the good work"]},
+            "next": {"completed": False, "number": 2.4, "name": "product management basics", "description": "APIs, databases (SQL, NoSQL, GraphQL), queries, foreign key constraints, inheritance, ACID properties", "tutorial": "tutorial", "hascomments": True, "comments": ["great job", "keep up the good work"]}
+        }
+
+    return render_template('homepage.jinja2', ann=ann, progress=progress, prev=modules["prev"], curr=modules["curr"], next=modules["next"])
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -89,29 +102,6 @@ def allowed_file(filename):
 
 def valid_module(module_number):
 	return module_number in VALID_MODULES
-	
-# --------- I'm commenting starting here ---------- #
-'''
-@app.route('/module/<module_number>')
-def module(module_number):
-	if not valid_module(module_number):
-		return jsonify({"errors": "invalid module number"})
-	module_dict = get_module_dict();
-	# Loops over each element's value (NOT the key) of given dict. Directly fed in to /
-	# the src of iframe.
-	return render_template('module.jinja2', module_dict=module_dict, module_number=module_number)
-
-
-
-@app.route('/exercise/<module_number>')
-def exercise(module_number):
-	if not valid_module(module_number):
-		return jsonify({"errors" : "invalid module number"})
-	#prompt = get_prompt()
-	prompt = "This is placeholder text"
-	return render_template('exercise.jinja2', module_number=module_number, prompt=prompt)
-'''
-# --------- I'm commenting ending here ---------- #
 
 @app.route('/modules/<module_number>')
 def module(module_number):
@@ -124,10 +114,6 @@ def module(module_number):
                 "exercises": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master" }
 
     return render_template('module.jinja2', module=module)
-
-@app.route('/notfound')
-def notfound():
-    return render_template('404notfound.jinja2')
 
 @app.route('/submodules/theory/<submodule_number>')
 def theory(submodule_number):
@@ -202,4 +188,10 @@ def submit_file():
     key = request.form.get("username") + "_" + request.form.get("module") + "_" + request.form.get("submodule") + "." + filename.rsplit('.', 1)[1].lower()
     client.upload_file(os.path.join(uploads_dir, filename), 'online-portal', key)
     return jsonify({})
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('page-not-found.jinja2')
     
+if __name__ == "__main__":
+   app.run(debug = True)
