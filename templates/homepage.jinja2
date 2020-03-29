@@ -17,7 +17,7 @@
 		color: white;
 	}
 
-	.progress-container {
+	.margin-lg-v {
 		margin: 25px 0px 25px;
 	}
 
@@ -25,7 +25,6 @@
 		display: inline-flex;
 		flex-direction: column;
 		justify-content: center;
-		/*align-items: center;*/
 	}
 
 	.module img {
@@ -61,9 +60,7 @@
   	{% endfor %}
 </ul> -->
 
-<div class="progress-container">
-	<h3>Your Certification Progress</h3>
-</div>
+<h3 class="margin-lg-v">Your Certification Progress</h3>
 
 <div class="ann-container">
 	<button type="button" class="btn btn-lg btn-warning" data-toggle="popover" data-placement="bottom" title="{{ann['title']}}" data-content="{{ann['description']}}">
@@ -71,9 +68,9 @@
 	</button>
 </div>
 
-
 <div class="row">
     <div class="col-12 col-lg-3 center-v">
+    	{% if prev %}
     	<div>Completed</div>
       	<div class="module card">
 	        <a name="{{prev['number']}}"></a>
@@ -87,6 +84,7 @@
 	        <div class="locked-overlay">
 	        </div>
 		</div>
+		{% endif %}
     </div>
     <div class="col-12 col-lg-6">
     	<div class="progress margin-md-v">
@@ -107,6 +105,7 @@
 		</div>
     </div>
     <div class="col-12 col-lg-3 center-v">
+    	{% if next %}
       	<div>Up Next</div>
       	<div class="module card">
 	        <a name="{{next['number']}}"></a>
@@ -121,6 +120,7 @@
 	        	<i class='fas fa-lock'></i>
 	        </div>
 		</div>
+		{% endif %}
     </div>
 </div>
 {% endblock %}
