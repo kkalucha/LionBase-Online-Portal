@@ -1,5 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request, Flask, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm.attributes import flag_modified
 from flask_login import login_user, logout_user, current_user, login_required, LoginManager
 from werkzeug.utils import secure_filename
 from werkzeug.urls import url_parse
@@ -58,13 +59,20 @@ def get_user_module(module_number):
     module_dict['locked'] = current_user.locked[module_number]
     module_dict['hascomments'] = current_user.hascomments[module_number]
     if module_dict['hascomments']:
-        module_dict['comments'] = Comment.query.filter_by(username=current_user.username, module=module_number)
+        module_dict['comments'] = Comment.query.filter_by(username=current_user.username, module=module_number).all()
     for i in range(NUM_SUBMODULES[module_number]):
         module_dict['submodules'][i]['locked'] = current_user.locked_sub[module_number][i]
     return module_dict
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def allowed_module(module_number):
+    return not (module_number < 0 or module_number > NUM_MODULES - 1 or current_user.locked[module_number])
+
+def allowed_submodule(module_number, submodule_number):
+    return not (module_number < 0 or module_number > NUM_MODULES - 1 or submodule_number < 0 or submodule_number > NUM_SUBMODULES[module_number] - 1\
+    or current_user.locked_sub[module_number][submodule_number])
 
 @app.route('/')
 @app.route('/index')
@@ -115,7 +123,7 @@ def register():
     dob = request.form.get('dob')
     major = request.form.get('major')
     program = request.form.get('program')
-    locked = [([False] + [True] * (MAX_SUBMODULES - 1))] + [ ([True] * MAX_SUBMODULES) for i in range(NUM_MODULES) ]
+    locked = [([False] + [True] * (MAX_SUBMODULES - 1))] + [ ([True] * MAX_SUBMODULES) for i in range(NUM_MODULES - 1) ]
     user = User(username=username, email=email, firstname=firstname, lastname=lastname, university=university,\
                 dob=dob, major=major, program=program, completed=[False] * NUM_MODULES,\
                 locked=([False] + [True] * (NUM_MODULES - 1)), hascomments=[False] * NUM_MODULES,\
@@ -153,15 +161,14 @@ def modules_route():
 @app.route('/modules/<int:module_number>')
 @login_required
 def module(module_number):
-    if module_number < 1 or module_number > NUM_MODULES or current_user.locked[module_number - 1]:
+    if not allowed_module(module_number - 1):
         abort(404)
     return render_template('module.jinja2', module=get_user_module(module_number - 1))
 
 @app.route('/modules/<int:module_number>/<int:submodule_number>/<kind>')
 @login_required
 def submodule(module_number, submodule_number, kind):
-    if module_number < 1 or module_number > NUM_MODULES or submodule_number < 1 or submodule_number > NUM_SUBMODULES[module_number - 1]\
-    or current_user.locked_sub[module_number - 1][submodule_number - 1]:
+    if not allowed_submodule(module_number - 1, submodule_number - 1):
         abort(404)
     return render_template('submodule.jinja2', module_number=module_number, submodule_number=submodule_number, kind=kind)
 
@@ -170,6 +177,17 @@ def submodule(module_number, submodule_number, kind):
 @login_required
 def notebook(notebook_name):
     return render_template("notebooks/" + notebook_name)
+
+@app.route('/complete/<int:module_number>/<int:submodule_number>')
+@login_required
+def complete(module_number, submodule_number):
+    if not allowed_submodule(module_number - 1, submodule_number - 1):
+        abort(404)
+    if submodule_number < NUM_SUBMODULES[module_number - 1]:
+        current_user.locked_sub[module_number - 1][submodule_number] = False
+        flag_modified(current_user, 'locked_sub')
+        db.session.commit()
+    return redirect('/modules/' + str(module_number))
 
 @app.route('/submit', methods=['POST'])
 @login_required
