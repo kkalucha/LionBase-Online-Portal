@@ -6,11 +6,51 @@
 
 {% block style %}
 <style>
+.customButton{
+    top : 0;
+    right : 0;
+    position: fixed;
+ }
 </style>
 {% endblock %}
   
 {% block content %}
+<div class="card text-center" style="margin: 20px 0px 20px">
+	<div class="card-header">
+		Go through this jupyter notebook carefully
+	</div>
+	<div class="card-body">
+	<p class="card-text">
+		Once you are done, click on complete to unlock the next submodule!
+	</p>
+	<div style="float: right">
+	    <a href="/complete/{{module_number}}/{{submodule_number}}" class="btn btn-primary">Mark as Completed</a>
+	</div>
+
+	<div style="float: left">
+	    <a href="/modules" class="btn btn-primary">Go back to Modules</a>
+	</div>
+	</div>
+</div>
+
 <div class="embed-responsive embed-responsive-16by9">
 	<iframe src="/notebook/{{module_number}}_{{submodule_number}}_{{kind}}.html"></iframe>
 </div>
+
+<div style="padding-top: 50px">
+<div class="card text-center" style="margin: 20px 0px 20px">
+	<div class="card-body">
+
+	<div style="float: right">
+	    <a href="/complete/{{module_number}}/{{submodule_number}}" class="btn btn-primary">Mark as Completed</a>
+	</div>
+
+	<div style="float: left">
+	    <a href="/modules" class="btn btn-primary">Go back to Modules</a>
+	</div>
+
+	</div>
+</div>
 {% endblock %}
+
+
