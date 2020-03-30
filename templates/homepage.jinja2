@@ -42,7 +42,7 @@
 {% endblock %}
 
 {% block content %}
-<h3 class="margin-lg-v">Your Certification Progress</h3>
+<h3 class="margin-lg-v">Welcome back {{name}}!</h3>
 
 <div class="ann-container">
 	<button type="button" class="btn btn-lg btn-warning" data-toggle="popover" data-placement="bottom" title="{{ann['title']}}" data-content="{{ann['description']}}">
@@ -105,4 +105,15 @@
 		{% endif %}
     </div>
 </div>
+
+<div style="padding-top: 50px">
+    <div class="card text-center" style="margin: 20px 0px 20px">
+    	<div class="card-body">
+
+    	        <h4 class="card-title">There are {{days_left}} days left until the Open Laptop Test</h4>
+
+    	</div>
+    </div>
+</div>
+
 {% endblock %}
