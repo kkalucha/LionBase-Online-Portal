@@ -75,6 +75,10 @@ def allowed_submodule(module_number, submodule_number):
     return not (module_number < 0 or module_number > NUM_MODULES - 1 or submodule_number < 0 or submodule_number > NUM_SUBMODULES[module_number] - 1\
     or current_user.locked_sub[module_number][submodule_number])
 
+import datetime
+def get_days_left():
+    return datetime.date(2020,5,2) - datetime.date.today()
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -149,7 +153,8 @@ def homepage():
     nex = None
     if current_user.current_module < NUM_MODULES - 1:
         nex = get_user_module(current_user.current_module + 1)
-    return render_template('homepage.jinja2', ann=ann, progress=progress, prev=prev, curr=module_dict, next=nex)
+    days_left=get_days_left()
+    return render_template('homepage.jinja2', ann=ann, progress=progress, prev=prev, curr=module_dict, next=nex, name=current_user.firstname, days_left=days_left)
 
 @app.route('/modules')
 @login_required
