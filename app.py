@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request, Flask, jsonify, abort
+from flask import render_template, flash, redirect, url_for, request, Flask, jsonify, abort, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.attributes import flag_modified
 from flask_login import login_user, logout_user, current_user, login_required, LoginManager
@@ -6,13 +6,12 @@ from werkzeug.utils import secure_filename
 from werkzeug.urls import url_parse
 from werkzeug.exceptions import BadRequest
 from config import Config
-import boto3
-import os
-import copy
+import boto3, os, copy, datetime, smtplib, ssl
 
 app = Flask(__name__)
 
 app.config.from_object(Config)
+app.permanent_session_lifetime = datetime.timedelta(seconds=20)
 db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_view = 'login'
@@ -20,9 +19,14 @@ login.login_view = 'login'
 ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'png', 'txt', 'py', 'ipynb']
 client = boto3.client('s3')
 uploads_dir = 'uploads'
-NUM_MODULES = 5
-MAX_SUBMODULES = 5
+MAX_MODULES = 50
+NUM_MODULES = 2
+MAX_SUBMODULES = 20
 NUM_SUBMODULES = [5, 3, 5, 2, 1]
+sender_address = os.environ.get('SENDER_ADDRESS')
+sender_password = os.environ.get('SENDER_PASSWORD')
+receiver_address = os.environ.get('RECEIVER_ADDRESS')
+mail_port = 465
 
 modules = [{"name" : "Analytics", "number" : "1", "description" : "this is the description", 
             "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
@@ -75,6 +79,10 @@ def allowed_submodule(module_number, submodule_number):
     return not (module_number < 0 or module_number > NUM_MODULES - 1 or submodule_number < 0 or submodule_number > NUM_SUBMODULES[module_number] - 1\
     or current_user.locked_sub[module_number][submodule_number])
 
+@app.before_request
+def before_request():
+    session.modified = True
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -97,6 +105,7 @@ def login():
     if user is None or not user.check_password(password):
         return jsonify({'errors':'invalid username/password'})
     login_user(user)
+    session.permanent = True
     return jsonify({})
 
 @app.route('/logout')
@@ -174,7 +183,6 @@ def submodule(module_number, submodule_number, kind):
     db.session.commit()
     return render_template('submodule.jinja2', module_number=module_number, submodule_number=submodule_number, kind=kind)
 
-
 @app.route('/notebook/<notebook_name>')
 @login_required
 def notebook(notebook_name):
@@ -210,13 +218,27 @@ def submit_file(module_number):
     db.session.commit()
     return jsonify({})
 
+@app.route('/support', methods=['GET', 'POST'])
+def query():
+    if request.method == 'GET':
+        return render_template('formpage.jinja2', success=False, fail=False)
+    if request.method == 'POST':
+        experience = request.form.get('experience')
+        name = request.form.get('name')
+        email = request.form.get('email')
+        comments = request.form.get('comments')
+        message = "Subject: [Lionbase Portal] [" + experience + "]\n\n" + name + "<" + email + "> : " + comments
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL("smtp.gmail.com", mail_port, context=context) as server:
+            server.login(sender_address, sender_password)
+            server.sendmail(sender_address, receiver_address, message)
+        return render_template('formpage.jinja2', success=True, fail=False)
+
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('page-not-found.jinja2')
-
-@app.route('/support')
-def support():
-    return render_template('formpage.jinja2')
     
 if __name__ == "__main__":
    app.run(debug = True)

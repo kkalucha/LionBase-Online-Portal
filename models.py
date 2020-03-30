@@ -1,5 +1,5 @@
 from datetime import datetime
-from app import db, login, NUM_MODULES, MAX_SUBMODULES
+from app import db, login, MAX_MODULES, MAX_SUBMODULES
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -24,10 +24,10 @@ class User(UserMixin, db.Model):
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
-        self.completed = [False] * NUM_MODULES
-        self.locked = [False] + [True] * (NUM_MODULES - 1)
-        self.locked_sub = [ ([False] + [True] * (MAX_SUBMODULES - 1)) ] + [ ([True] * MAX_SUBMODULES) for i in range(NUM_MODULES - 1) ]
-        self.hascomments = [False] * NUM_MODULES
+        self.completed = [False] * MAX_MODULES
+        self.locked = [False] + [True] * (MAX_MODULES - 1)
+        self.locked_sub = [ ([False] + [True] * (MAX_SUBMODULES - 1)) ] + [ ([True] * MAX_SUBMODULES) for i in range(MAX_MODULES - 1) ]
+        self.hascomments = [False] * MAX_MODULES
         self.current_module = 0
 
     def __repr__(self):
