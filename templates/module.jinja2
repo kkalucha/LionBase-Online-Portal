@@ -37,10 +37,10 @@
 	<p class="card-text">
 		This link will take you to a live jupyter notebook. Feel free to partner up to solve the tasks, but mention them in your submission. To submit, download your notebook and upload using the button below. then click submit.
 	</p>
-	<a href="{{module['exercise']}}" class="btn btn-primary">Go to Assignment</a>
+	<a href="{{module['exercise']}}" target="_blank" class="btn btn-primary">Go to Assignment</a>
 
     <div class "btn" style="padding-top: 10px">
-        <form action="/submit/{{module['number']}}">
+        <form action="/submit/{{module['number']}}" target="_blank"m>
             <input type="file" id="myFile" name="filename">
              <input type="submit">
         </form>
