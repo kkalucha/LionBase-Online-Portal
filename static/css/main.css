@@ -148,6 +148,8 @@ iframe {
 /*//////////////////////////////////////////////////////////////////
 [ login ]*/
 
+
+
 .limiter {
   width: 100%;
   margin: 0 auto;
@@ -182,11 +184,11 @@ iframe {
   height: 100%;
   top: 0;
   left: 0;
-  background: #005bea;
-  background: -webkit-linear-gradient(bottom, #005bea, #00c6fb);
-  background: -o-linear-gradient(bottom, #005bea, #00c6fb);
-  background: -moz-linear-gradient(bottom, #005bea, #00c6fb);
-  background: linear-gradient(bottom, #005bea, #00c6fb);
+  background: #FFFFFF;
+  background: -webkit-linear-gradient(bottom, #FFFFFF, #FFFFFF);
+  background: -o-linear-gradient(bottom, #FFFFFF, #FFFFFF);
+  background: -moz-linear-gradient(bottom, #FFFFFF, #FFFFFF);
+  background: linear-gradient(bottom, #FFFFFF, #FFFFFF);
   opacity: 0.9;
 }
 
@@ -223,8 +225,8 @@ iframe {
 
 /*---------------------------------------------*/
 .login100-form-avatar {
-  width: 150px;
-  height: 150px;
+  width: auto;
+  height: auto;
   overflow: hidden;
   margin: 0 auto;
 }

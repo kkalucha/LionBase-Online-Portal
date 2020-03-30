@@ -14,18 +14,18 @@
 <div class="module card flex-row flex-wrap margin-md-v">
 	<a name="{{submodule['number']}}"></a>
     <div class="thumbnail-container card-header border-0">
-        <h4 class="card-title" style="font: 20pt">{{submodule['number']}}: {{submodule["name"]}}</h4>
+        <h4 class="card-title" style="font: 20pt">{{submodule['number']}}: {{submodule['name']}}</h4>
     </div>
     <div class="text-container card-block px-2">
-        <p class="card-text" style="font: 14pt">{{submodule["description"]}}</p>
+        <p class="card-text" style="font: 14pt">{{submodule['description']}}</p>
 		<div class="margin-md-v">
-            <a href="/submodules/theory/{{submodule['number']}}" class="btn btn-primary {{'disabled' if module['locked']}}">Theory</a>
+            <a href="/modules/{{module['number']}}/{{submodule['number']}}/theory" class="btn btn-primary {{'disabled' if submodule['locked']}}">Theory</a>
         </div>
         <div class="margin-md-v">
-            <a href="/submodules/case/{{submodule['number']}}" class="btn btn-primary {{'disabled' if module['locked']}}">Case</a>
+            <a href="/modules/{{module['number']}}/{{submodule['number']}}/case" class="btn btn-primary {{'disabled' if submodule['locked']}}">Case</a>
         </div>
     </div>
-    {{"<div class='locked-overlay'><i class='fas fa-lock'></i></div>" if submodule["locked"]}}
+    {{"<div class='locked-overlay'><i class='fas fa-lock'></i></div>" if submodule['locked']}}
 </div>
 {% endfor %}
 	
@@ -37,7 +37,7 @@
 	<p class="card-text">
 		This link will take you to a live jupyter notebook. Feel free to partner up to solve the tasks, but mention them in your submission
 	</p>
-	<a href="{{module['exercises']}}" class="btn btn-primary">Go to Assignment</a>
+	<a href="{{module['exercise']}}" class="btn btn-primary">Go to Assignment</a>
 	</div>
 </div>
 {% endblock %}
