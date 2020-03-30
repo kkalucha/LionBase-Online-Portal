@@ -18,13 +18,13 @@
         <img src="/static/images/logo.png">
     </div>
     <div class="text-container card-block px-2">
-        <h4 class="card-title">Module {{module['number']}}: {{module["name"]}}</h4>
-        <p class="card-text">{{module["description"]}}</p>
+        <h4 class="card-title">Module {{module['number']}}: {{module['name']}}</h4>
+        <p class="card-text">{{module['description']}}</p>
 		<div class="margin-md-v">
-            <a href="/modules/{{module['number']}}" class="btn btn-primary {{'disabled' if not module['completed']}}">Get Started</a>
+            <a href="modules/{{module['number']}}" class="btn btn-primary {{'disabled' if module['locked']}}">Get Started</a>
         </div>
     </div>
-    {{"<div class='locked-overlay'><i class='fas fa-lock'></i></div>" if module["locked"]}}
+    {{"<div class='locked-overlay'><i class='fas fa-lock'></i></div>" if module['locked']}}
 </div>
 {% endfor %}
 {% endblock %}
