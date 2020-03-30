@@ -213,6 +213,10 @@ def submit_file(module_number):
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('page-not-found.jinja2')
+
+@app.route('/support')
+def support():
+    return render_template('formpage.jinja2')
     
 if __name__ == "__main__":
    app.run(debug = True)

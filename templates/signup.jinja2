@@ -26,9 +26,9 @@
 <body>
 
 	<div class="limiter">
-		<div class="container-login100" style="background-image: url('static/images/img-01.jpg');">
+		<div class="container-login100" >
 			<div class="wrap-login100 p-t-190 p-b-30">
-				<form class="login100-form validate-form" onsubmit="return false;">
+				<form class="login100-form validate-form" onsubmit="return validate();">
 					<div class="login100-form-avatar">
 						<img src="static/images/logo.png" alt="LOGO">
 					</div>
@@ -69,17 +69,12 @@
           </div>
 
           <div class="wrap-input100 validate-input m-b-10" data-validate = "Date of birth is required">
-            <input class="input100" type="dob" name="dob" placeholder="Date of birth (MMDDYYYY)">
+            <input class="input100" type="date" name="dob" placeholder="Date of birth (MMDDYYYY)">
             <span class="focus-input100"></span>
           </div>
 
           <div class="wrap-input100 validate-input m-b-10" data-validate = "Major is required">
             <input class="input100" type="major" name="major" placeholder="Major">
-            <span class="focus-input100"></span>
-          </div>
-
-          <div class="wrap-input100 validate-input m-b-10" data-validate = "Program is required">
-            <input class="input100" type="program" name="program" placeholder="Pilot Program/LionBaseNetwork">
             <span class="focus-input100"></span>
           </div>
 
@@ -92,15 +87,25 @@
 					</div>
 
           <div class="wrap-input100 validate-input m-b-10" data-validate = "Please confirm password">
-						<input class="input100" type="confirm_password" name="confirm_password" placeholder="Confirm password">
+						<input class="input100" type="password" name="confirm_password" placeholder="Confirm password">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-lock"></i>
 						</span>
 					</div>
 
-          <div class="wrap-input100 validate-input m-b-10" data-validate = "Signature is required">
-            <input class="input100" type="agreementstatus" name="agreementstatus" placeholder="Sign to agree to terms">
+					<div class="wrap-input100 validate-input m-b-10" data-validate = "Program is required">
+					  	<label for="program"> Select program: </label>
+							<select name='program'>
+							<option value="Pilot Program">Pilot Program</option>
+							<option value="LionBase Network">LionBase Network</option>
+						</select>
+						</span>
+					</div>
+
+          <div class="wrap-input100 validate-input m-b-10" data-validate = "You must check this box">
+            <input type="checkbox" name="agreementstatus" placeholder="Sign to agree to terms">
+						<label for="agreementstatus"> Check box to agree to terms</label>
             <span class="focus-input100"></span>
           </div>
 
@@ -124,6 +129,14 @@
 <!--===============================================================================================-->
 	<script src="static/js/main.js"></script>
 
+	<script>
+		function validate(){
+			if($("[name='password']").val()===$("[name='confirm_password']").val())alert("Passwords must match");
+			return $("[name='password']").val()===$("[name='confirm_password']").val();
+		return false;
+		}
+		</script>
+
   <script>
   $(document).ready(function() {
       $("[name='create']").click(function() {
@@ -145,9 +158,10 @@
                   firstname: $("[name='firstname']").val(),
                   username: $("[name='username']").val()
               },
-			  success:function(response){ 
+			  success:function(response){
 				if (response.errors == null) window.location.href = "/homepage";
-				else $("[name='firstname']").val("stupid boy");
+				else $("[name='firstname']").val("Incorrect username or password");
+				if ($_POST[])
 			  }
           });
       });
