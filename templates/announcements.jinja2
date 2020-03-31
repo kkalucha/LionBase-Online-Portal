@@ -1,1 +1,62 @@
-hi
+{% extends "layout.jinja2" %}
+
+{% block title %}
+<title>Announcements</title>
+{% endblock %}
+
+{% block style %}
+<style>
+	.ann-container {
+		position: absolute;
+		top: 0px;
+		right: 10px;
+	}
+	.ann-container i {
+		font-size: 25px;
+		color: white;
+	}
+	.margin-lg-v {
+		margin: 25px 0px 25px;
+	}
+	.center-v {
+		display: inline-flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+	.module img {
+		max-height: 100%;
+		max-width: 100%;
+	}
+	.card-block {
+		padding: 10px;
+	}
+	.module.curr {
+		box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+		transition: all 0.25s ease-in-out;
+	}
+	.module.curr:hover {
+	  transform: scale(1.01, 1.01);
+	  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+<h3 class="margin-lg-v">Announcements</h3>
+
+<div class="row">
+    <div class="col-12 col-lg-3 center-v">
+    	{% for announcements in ann %}
+      	<div class="module card">
+	        <div class="card-block px-2">
+              <p class="card-text">Published on: {{announcements.date}}</p>
+	            <h4 class="card-title">{{announcements.title}}</h4>
+              <p class="card-text">{{announcements.description}}</p>
+		      </div>
+        </div>
+      </div>
+      {% endfor %}
+</div>
+
+
+{% endblock %}
