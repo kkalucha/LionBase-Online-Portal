@@ -233,7 +233,28 @@ def query():
             server.login(sender_address, sender_password)
             server.sendmail(sender_address, receiver_address, message)
         return render_template('formpage.jinja2', success=True, fail=False)
-        
+
+@app.route('/announcements')
+#@login_required
+def announcements():
+    ann = [
+        {
+            "title": "Program Kickoff",
+            "description": "Join us on Zoom for our first bonding event! Meet other students in the program.",
+            "date": "03/31/2020"
+        },
+        {
+            "title": "Middle Child Announcement",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "date": "03/20/2020"
+        },
+        {
+            "title": "Earliest Announcement",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "date": "03/15/2020"
+        }
+           ]
+    return render_template('announcements.jinja2', ann=ann)
 
 @app.errorhandler(404)
 def page_not_found(e):
