@@ -79,15 +79,15 @@ def allowed_submodule(module_number, submodule_number):
     return not (module_number < 0 or module_number > NUM_MODULES - 1 or submodule_number < 0 or submodule_number > NUM_SUBMODULES[module_number] - 1\
     or current_user.locked_sub[module_number][submodule_number])
 
-<<<<<<< HEAD
+
 import datetime
 def get_days_left():
     return datetime.date(2020,5,2) - datetime.date.today()
-=======
+
 @app.before_request
 def before_request():
     session.modified = True
->>>>>>> 125a5a814a688cd792adf68362533c84df04dce1
+
 
 @app.route('/')
 @app.route('/index')
