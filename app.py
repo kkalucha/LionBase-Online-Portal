@@ -28,30 +28,30 @@ sender_password = os.environ.get('SENDER_PASSWORD')
 receiver_address = os.environ.get('RECEIVER_ADDRESS')
 mail_port = 465
 
-modules = [{"name" : "Analytics", "number" : "1", "description" : "this is the description", 
+modules = [{"name" : "Analytics", "number" : "1", "description" : "this is the description",
             "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
             "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
                            {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"},
                            {"name" : "supervised machine learning", "number" : "3", "description" : "this is third one"},
                            {"name" : "supervised machine learning", "number" : "4", "description" : "this is fourth one"},
                            {"name" : "supervised machine learning", "number" : "5", "description" : "this is fifth one"}]},
-            {"name" : "Analytics", "number" : "2", "description" : "this is the description", 
+            {"name" : "Analytics", "number" : "2", "description" : "this is the description",
             "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
             "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
                            {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"},
                            {"name" : "supervised machine learning", "number" : "3", "description" : "this is third one"}]},
-            {"name" : "Analytics", "number" : "3", "description" : "this is the description", 
+            {"name" : "Analytics", "number" : "3", "description" : "this is the description",
             "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
             "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
                            {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"},
                            {"name" : "supervised machine learning", "number" : "3", "description" : "this is third one"},
                            {"name" : "supervised machine learning", "number" : "4", "description" : "this is fourth one"},
                            {"name" : "supervised machine learning", "number" : "5", "description" : "this is fifth one"}]},
-            {"name" : "Analytics", "number" : "4", "description" : "this is the description", 
+            {"name" : "Analytics", "number" : "4", "description" : "this is the description",
             "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
             "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
                            {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"}]},
-            {"name" : "Analytics", "number" : "5", "description" : "this is the description", 
+            {"name" : "Analytics", "number" : "5", "description" : "this is the description",
             "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
             "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"}]}]
 
@@ -98,7 +98,7 @@ def login():
         if current_user.is_authenticated:
             return redirect(url_for('homepage'))
         return render_template('login.jinja2')
-    
+
     username = request.form.get('username')
     password = request.form.get('password')
     user = User.query.filter_by(username=username).first()
@@ -140,7 +140,7 @@ def register():
     db.session.commit()
     login_user(user)
     return jsonify({})
-    
+
 @app.route('/homepage', methods=['GET', 'POST'])
 @login_required
 def homepage():
@@ -233,12 +233,11 @@ def query():
             server.login(sender_address, sender_password)
             server.sendmail(sender_address, receiver_address, message)
         return render_template('formpage.jinja2', success=True, fail=False)
-
-
+        
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('page-not-found.jinja2')
-    
+
 if __name__ == "__main__":
    app.run(debug = True)
