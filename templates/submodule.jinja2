@@ -21,7 +21,7 @@
 	</div>
 	<div class="card-body">
 
-	{% if str(kind) == 'case' %}
+	{% if kind == 'case' %}
 	<p class="card-text">
 		Once you are done, click on complete to unlock the next submodule!
 	</p>
@@ -33,7 +33,7 @@
 	{% endif %}
 
 
-	{% if str(kind) == 'theory' %}
+	{% if kind == 'theory' %}
 	<p class="card-text">
 		Once you are done, click on Next to go to the next segment!
 	</p>
@@ -59,9 +59,30 @@
 <div class="card text-center" style="margin: 20px 0px 20px">
 	<div class="card-body">
 
+
+    {% if kind == 'case' %}
+	<p class="card-text">
+		Once you are done, click on complete to unlock the next submodule!
+	</p>
+
 	<div style="float: right">
 	    <a href="/complete/{{module_number}}/{{submodule_number}}" class="btn btn-primary">Mark as Completed</a>
 	</div>
+
+	{% endif %}
+
+
+	{% if kind == 'theory' %}
+	<p class="card-text">
+		Once you are done, click on Next to go to the next segment!
+	</p>
+
+	<div style="float: right">
+	    <a href="/modules/{{module_number}}/{{submodule_number}}/case" class="btn btn-primary">Next</a>
+	</div>
+
+	{% endif %}
+
 
 	<div style="float: left">
 	    <a href="/modules" class="btn btn-primary">Go back to Modules</a>
