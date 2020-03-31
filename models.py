@@ -65,5 +65,5 @@ class Submission(db.Model):
         return self.key
 
     def __init__(self, **kwargs):
-        super(User, self).__init__(**kwargs)
+        super(Submission, self).__init__(**kwargs)
         self.graded = False
