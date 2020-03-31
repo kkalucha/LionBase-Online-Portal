@@ -235,7 +235,7 @@ def query():
         return render_template('formpage.jinja2', success=True, fail=False)
 
 @app.route('/announcements')
-#@login_required
+@login_required
 def announcements():
     ann = [
         {
