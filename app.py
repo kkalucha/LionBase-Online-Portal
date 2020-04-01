@@ -60,18 +60,18 @@ sender_password = os.environ.get('SENDER_PASSWORD')
 receiver_address = os.environ.get('RECEIVER_ADDRESS')
 mail_port = 465
 
-modules = [{"name" : "Capture, Maintain, Process", "number" : "1", "description" : "this is the description of cmp",
+modules = [{"name" : "Capture, Maintain, Process", "number" : "1", "description" : "Welcome! Module 1 dives into the foundations of the data science life cycle. As you progress, you’ll increase your flexibility and understanding to maximize returns at each phase of the process. Let’s get started!",
             "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-01/master",
-            "submodules": [{"name" : "Using an API", "number" : "1", "description" : "this is ML but supervised", "maxelements":"2"},
-                           {"name" : "Databases", "number" : "2", "description" : "this is the second ML", "maxelements":"2"},
-                           {"name" : "Data Quality", "number" : "3", "description" : "this is third one","maxelements":"2"}]},
-            {"name" : "Analytics - Supervised", "number" : "2", "description" : "this is the description of supervised",
+            "submodules": [{"name" : "Using an API", "number" : "1", "description" : "Explore the world of Application Programming Interfaces— an interface that allows your application to interact with external services using simple commands. Harness their power to save time and efficiency.", "maxelements":"2"},
+                           {"name" : "Databases", "number" : "2", "description" : "Databases are organized collections of structured information. Here, you’ll learn how databases can help you access, manage, and update information.", "maxelements":"2"},
+                           {"name" : "Data Quality", "number" : "3", "description" : "Data quality may very well be the single most important component of a data pipeline; without a level of confidence and reliability in your data, analysis generated from the data is near useless.","maxelements":"2"}]},
+            {"name" : "Analytics - Supervised", "number" : "2", "description" : "Welcome to the second module! Dive into supervised analytics, where both input and preferred output are part of the training data. Learn how previously known classifications can be used to train models to correctly label unknown data points.",
             "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-02/master",
-            "submodules": [{"name" : "Linear Regression", "number" : "1", "description" : "this is ML but supervised", "maxelements":"3"},
-                           {"name" : "Model Selection and Assessment", "number" : "2", "description" : "this is the second ML", "maxelements":"4"},
-                           {"name" : "Basic Classification", "number" : "3", "description" : "this is third one", "maxelements":"4"},
-                           {"name" : "Decision Trees + Random Forest", "number" : "4", "description" : "this is fourth one", "maxelements":"2"},
-                           {"name" : "Naive Bayes + SVMs", "number" : "5", "description" : "this is fifth desc", "maxelements":"3"}]},
+            "submodules": [{"name" : "Linear Regression", "number" : "1", "description" : "Linear regression is the oldest, simple and widely used supervised machine learning algorithm for predictive analysis. Discover how linear regression is used for finding linear relationships between target and one or more predictors.", "maxelements":"3"},
+                           {"name" : "Model Selection and Assessment", "number" : "2", "description" : "In model selection, we estimate the performance of various competing models with the hopes of choosing the best one. Explore how this model can then be assessed by estimating the prediction error on new data.", "maxelements":"4"},
+                           {"name" : "Basic Classification", "number" : "3", "description" : "Dive into classification— the process of predicting the class of given data points. You’ll be introduced to logistic regression, linear discriminant analysis, and the k-Nearest Neighbors theory.", "maxelements":"4"},
+                           {"name" : "Decision Trees + Random Forest", "number" : "4", "description" : "It’s time to branch out! Learn how to build classification or regression models— in the form of a tree structure.", "maxelements":"2"},
+                           {"name" : "Naive Bayes + SVMs", "number" : "5", "description" : "Explore classifiers further, and discover how Support-Vector Machine and Naive Bayes theories can be used to distinctly classify data points.", "maxelements":"3"}]},
             {"name" : "Analytics", "number" : "3", "description" : "this is the description",
             "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
             "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
@@ -282,6 +282,31 @@ def query():
 def announcements():
     ann = Announcement.query.all()
     return render_template('announcements.jinja2', ann=ann)
+
+
+@app.route('/complete', methods=['GET', 'POST'])
+@login_required
+def grading():
+    if current_user.email not in TA_EMAILS:
+        abort(404)
+    if request.method == 'GET':
+        return render_template('commentme.jinja2')
+    username = request.form.get('username')
+    grader = request.form.get('TA')
+    module = int(request.form.get('module'))
+    comment = request.form.get('comments')
+    comment = Comment(username=username, comment=comment, module=(module-1))
+    db.session.add(comment)
+    submission = Submission.query.filter_by(username=username).filter_by(module=module-1).first()
+    submission.graded = True
+    student = User.query.filter_by(username=username).first()
+    student.hascomments[module - 1] = True
+    student.locked[module] = False
+    student.locked_sub[module][0] = False
+    flag_modified(student, 'locked')
+    flag_modified(student, 'locked_sub')
+    db.session.commit()
+    return render_template('commentme.jinja2')
 
 @app.errorhandler(404)
 def page_not_found(e):
