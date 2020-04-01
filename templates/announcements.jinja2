@@ -44,11 +44,12 @@
 {% block content %}
 <h3 class="margin-lg-v">Announcements</h3>
 
-<div class="row">
-    <div class="col-12 col-lg-3 center-v">
+
+<div class="module card flex-row flex-wrap margin-md-v">
+    <div >
     	{% for announcements in ann %}
-      	<div class="module card">
-	        <div class="card-block px-2">
+      	<div >
+	        <div class="card-block px-2" style="margin: 20px 0px 20px">
               <p class="card-text">Published on: {{announcements.date}}</p>
 	            <h4 class="card-title">{{announcements.title}}</h4>
               <p class="card-text">{{announcements.description}}</p>
