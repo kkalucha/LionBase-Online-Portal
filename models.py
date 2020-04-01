@@ -20,7 +20,7 @@ class User(UserMixin, db.Model):
     locked = db.Column(db.ARRAY(db.Boolean(), dimensions=1))
     locked_sub = db.Column(db.ARRAY(db.Boolean(), dimensions=2))
     hascomments = db.Column(db.ARRAY(db.Boolean(), dimensions=1))
-    current_module = db.Column(db.Integer)
+    current_element = db.Column(db.ARRAY(db.Integer, dimensions=2))
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -28,7 +28,7 @@ class User(UserMixin, db.Model):
         self.locked = [False] + [True] * (MAX_MODULES - 1)
         self.locked_sub = [ ([False] + [True] * (MAX_SUBMODULES - 1)) ] + [ ([True] * MAX_SUBMODULES) for i in range(MAX_MODULES - 1) ]
         self.hascomments = [False] * MAX_MODULES
-        self.current_module = 0
+        self.current_element = [[0] * MAX_SUBMODULES] * MAX_MODULES
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -53,6 +53,17 @@ class Comment(db.Model):
     def __repr__(self):
         return self.comment
 
+class Survey(db.Model):
+    __tablename__ = 'responses'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String())
+    module = db.Column(db.Integer)
+    submodule = db.Column(db.Integer)
+    responses = db.Column(db.ARRAY(db.String(), dimensions=1))
+
+    def __repr__(self):
+        return self.username + "_" + self.module
+
 class Submission(db.Model):
     __tablename__ = 'submissions'
     id = db.Column(db.Integer, primary_key=True)
@@ -67,3 +78,13 @@ class Submission(db.Model):
     def __init__(self, **kwargs):
         super(Submission, self).__init__(**kwargs)
         self.graded = False
+
+class Announcement(db.Model):
+    __tablename__ = 'announcements'
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String())
+    title = db.Column(db.String())
+    description = db.Column(db.String())
+
+    def __repr__(self):
+        {'date':self.date, 'title':self.title, 'description':self.description}
