@@ -231,15 +231,27 @@ def notebook(module_number, submodule_number, element):
         abort(404)
     return render_template("notebooks/" + str(module_number) + "_" + str(submodule_number) + "_" + str(element) + ".html")
 
-@app.route('/complete/<int:module_number>/<int:submodule_number>')
+@app.route('/complete/<int:module_number>/<int:submodule_number>', methods=['GET','POST'])
 @login_required
 def complete(module_number, submodule_number):
     if not allowed_submodule(module_number - 1, submodule_number - 1):
         abort(404)
+    if request.method == 'GET':
+        return render_template('survey.jinja2')
+    q1 = request.form.get('q1')
+    q2 = request.form.get('q2')
+    q3 = request.form.get('q3')
+    q4 = request.form.get('q4')
+    q5 = request.form.get('q5')
+    if not q1 or not q2 or not q3 or not q4 or not q5:
+        return render_template('survey.jinja2', fail=True)
+    survey = Survey(username=current_user.username, module=module_number - 1, submodule=submodule_number - 1,\
+        responses=[q1] + [q2] + [q3] + [q4] + [q5])
+    db.session.add(survey)
     if submodule_number < NUM_SUBMODULES[module_number - 1]:
         current_user.locked_sub[module_number - 1][submodule_number] = False
         flag_modified(current_user, 'locked_sub')
-        db.session.commit()
+    db.session.commit()
     return redirect('/modules/' + str(module_number))
 
 @app.route('/submit/<int:module_number>', methods=['POST'])

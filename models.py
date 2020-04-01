@@ -62,7 +62,7 @@ class Survey(db.Model):
     responses = db.Column(db.ARRAY(db.String(), dimensions=1))
 
     def __repr__(self):
-        return self.username + "_" + self.module
+        return self.username + "_" + self.module + " " + self.submodule
 
 class Submission(db.Model):
     __tablename__ = 'submissions'
