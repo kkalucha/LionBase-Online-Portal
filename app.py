@@ -17,6 +17,38 @@ login = LoginManager(app)
 login.login_view = 'login'
 
 ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'png', 'txt', 'py', 'ipynb']
+STUDENT_EMAILS = ['wr2314@columbia.edu',\
+'ic2502@columbia.edu',\
+'ws2578@columbia.edu',\
+'g.su@columbia.edu',\
+'atg2152@barnard.edu',\
+'tc2963@columbia.edu',\
+'edl2123@columbia.edu',\
+'yk2822@columbia.edu',\
+'xw2600@columbia.edu',\
+'kaw2216@columbia.edu',\
+'gn2271@barnard.edu',\
+'zim2103@columbia.edu',\
+'jap2293@columbia.edu',\
+'vc2534@columbia.edu',\
+'gd2528@columbia.edu',\
+'sg3789@columbia.edu',\
+'alt2177@columbia.edu',\
+'yl4095@columbia.edu',\
+'At3456@columbia.edu',\
+'kaan.avci@columbia.edu',\
+'yw3473@columbia.edu',\
+'mac2492@columbia.edu',\
+'cbo2108@columbia.edu',\
+'jordan.phillips@columbia.edu',\
+'kak2240@columbia.edu',\
+'fbb2117@columbia.edu']
+TA_EMAILS = ['logan.troy@columbia.edu',\
+'ketan.jog@lionbase.nyc',\
+'kevin.le@lionbase.nyc',\
+'kevin.chen@lionbase.nyc']
+ADMIN_EMAIL = 'certificate@lionbase.nyc'
+
 client = boto3.client('s3')
 uploads_dir = 'uploads'
 MAX_MODULES = 50
@@ -99,7 +131,6 @@ def index():
     else:
         return redirect(url_for('login'))
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
@@ -132,6 +163,8 @@ def register():
     username = request.form.get('username')
     password = request.form.get('password')
     email = request.form.get('email')
+    if email != ADMIN_EMAIL and (not email in STUDENT_EMAILS) and (not email in TA_EMAILS):
+        return jsonify({'errors':'sorry, you are not allowed to use this service'})
     user = User.query.filter((User.username == username) | (User.email == email)).first()
     if user is not None:
         return jsonify({'errors':'user already exists'})
@@ -196,7 +229,7 @@ def submodule(module_number, submodule_number, element):
 def notebook(module_number, submodule_number, element):
     if not allowed_submodule(module_number - 1, submodule_number - 1):
         abort(404)
-    return render_template("notebooks/" + module_number + "_" + submodule_number + "_" + element + ".html")
+    return render_template("notebooks/" + str(module_number) + "_" + str(submodule_number) + "_" + str(element) + ".html")
 
 @app.route('/complete/<int:module_number>/<int:submodule_number>')
 @login_required
