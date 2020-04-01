@@ -9,9 +9,9 @@
 <div class="module card flex-row flex-wrap margin-md-v">
     {{"<a> GRADED </a>" if submission['graded']}}
     <div class="text-container card-block px-2">
-        <h4 class="card-title"> {{submission['username']}}: {{submission['modulenumber']}}</h4>
+        <h4 class="card-title"> {{submission['username']}}: {{submission['module'] + 1}}</h4>
 		<div class="margin-md-v">
-            <a href="/download/{{submission['filename']}}" class="btn btn-primary ">Download </a>
+            <a href="/download/{{submission['key']}}" target="_blank" class="btn btn-primary ">Download </a>
         </div>
     </div>
 </div>

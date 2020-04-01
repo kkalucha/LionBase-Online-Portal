@@ -74,7 +74,7 @@ class Submission(db.Model):
     grader = db.Column(db.String())
 
     def __repr__(self):
-        return self.key
+        return {'username':self.username, 'modulenumber':str(self.module + 1), 'filename':self.key, 'graded':self.graded}
 
     def __init__(self, **kwargs):
         super(Submission, self).__init__(**kwargs)

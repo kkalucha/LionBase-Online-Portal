@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request, Flask, jsonify, abort, session
+from flask import render_template, flash, redirect, url_for, request, Flask, jsonify, abort, session, send_file
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.attributes import flag_modified
 from flask_login import login_user, logout_user, current_user, login_required, LoginManager
@@ -46,8 +46,8 @@ STUDENT_EMAILS = ['wr2314@columbia.edu',\
 TA_EMAILS = ['logan.troy@columbia.edu',\
 'ketan.jog@lionbase.nyc',\
 'kevin.le@lionbase.nyc',\
-'kevin.chen@lionbase.nyc']
-ADMIN_EMAIL = 'certificate@lionbase.nyc'
+'kevin.chen@lionbase.nyc',\
+'certificate@lionbase.nyc']
 
 client = boto3.client('s3')
 uploads_dir = 'uploads'
@@ -163,7 +163,7 @@ def register():
     username = request.form.get('username')
     password = request.form.get('password')
     email = request.form.get('email')
-    if email != ADMIN_EMAIL and (not email in STUDENT_EMAILS) and (not email in TA_EMAILS):
+    if (not email in STUDENT_EMAILS) and (not email in TA_EMAILS):
         return jsonify({'errors':'sorry, you are not allowed to use this service'})
     user = User.query.filter((User.username == username) | (User.email == email)).first()
     if user is not None:
@@ -295,6 +295,21 @@ def announcements():
     ann = Announcement.query.all()
     return render_template('announcements.jinja2', ann=ann)
 
+@app.route('/submissions')
+@login_required
+def submissions():
+    if current_user.email not in TA_EMAILS:
+        abort(404)
+    return render_template('submissions.jinja2', all_submissions=Submission.query.all())
+
+@app.route('/download/<filename>')
+@login_required
+def download(filename):
+    if current_user.email not in TA_EMAILS:
+        abort(404)
+    output = 'downloads/' + filename
+    client.download_file('online-portal', filename, output)
+    return send_file(output, as_attachment=True)
 
 @app.route('/complete', methods=['GET', 'POST'])
 @login_required
