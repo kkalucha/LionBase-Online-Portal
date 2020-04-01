@@ -108,7 +108,7 @@ def allowed_module(module_number):
 
 def get_current_module():
     i = 0
-    while not current_user.locked[i]:
+    while not current_user.locked[i] and i < NUM_MODULES:
         i += 1
     return i - 1
 
