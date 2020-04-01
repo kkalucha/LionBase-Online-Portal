@@ -22,22 +22,24 @@ uploads_dir = 'uploads'
 MAX_MODULES = 50
 NUM_MODULES = 2
 MAX_SUBMODULES = 20
-NUM_SUBMODULES = [3, 3, 5, 2, 1]
+NUM_SUBMODULES = [3, 5]
 sender_address = os.environ.get('SENDER_ADDRESS')
 sender_password = os.environ.get('SENDER_PASSWORD')
 receiver_address = os.environ.get('RECEIVER_ADDRESS')
 mail_port = 465
 
-modules = [{"name" : "Capture, Maintain, Process", "number" : "1", "description" : "this is the description",
+modules = [{"name" : "Capture, Maintain, Process", "number" : "1", "description" : "this is the description of cmp",
             "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-01/master",
-            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised", "maxelements":"2"},
-                           {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML", "maxelements":"2"},
-                           {"name" : "supervised machine learning", "number" : "3", "description" : "this is third one","maxelements":"2"}]},
-            {"name" : "Analytics", "number" : "2", "description" : "this is the description",
-            "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
-            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
-                           {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"},
-                           {"name" : "supervised machine learning", "number" : "3", "description" : "this is third one"}]},
+            "submodules": [{"name" : "Using an API", "number" : "1", "description" : "this is ML but supervised", "maxelements":"2"},
+                           {"name" : "Databases", "number" : "2", "description" : "this is the second ML", "maxelements":"2"},
+                           {"name" : "Data Quality", "number" : "3", "description" : "this is third one","maxelements":"2"}]},
+            {"name" : "Analytics - Supervised", "number" : "2", "description" : "this is the description of supervised",
+            "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-02/master",
+            "submodules": [{"name" : "Linear Regression", "number" : "1", "description" : "this is ML but supervised", "maxelements":"3"},
+                           {"name" : "Model Selection and Assessment", "number" : "2", "description" : "this is the second ML", "maxelements":"4"},
+                           {"name" : "Basic Classification", "number" : "3", "description" : "this is third one", "maxelements":"4"},
+                           {"name" : "Decision Trees + Random Forest", "number" : "4", "description" : "this is fourth one", "maxelements":"2"},
+                           {"name" : "Naive Bayes + SVMs", "number" : "5", "description" : "this is fifth desc", "maxelements":"3"}]},
             {"name" : "Analytics", "number" : "3", "description" : "this is the description",
             "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
             "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
@@ -63,7 +65,6 @@ def get_user_module(module_number):
         module_dict['comments'] = Comment.query.filter_by(username=current_user.username, module=module_number).all()
     for i in range(NUM_SUBMODULES[module_number]):
         module_dict['submodules'][i]['locked'] = current_user.locked_sub[module_number][i]
-        print(current_user.current_element[2][1])
         module_dict['submodules'][i]['currentelement'] = current_user.current_element[module_number][i]
     return module_dict
 
@@ -156,7 +157,7 @@ def homepage():
     module_dict = get_user_module(current_module)
     cur = 0
     for i in range(NUM_SUBMODULES[current_module]):
-        if module_dict['submodules'][i]['locked']:
+        if module_dict['submodules'][i]['locked'] or i == NUM_SUBMODULES[current_module] - 1:
             cur = i
             break
     progress = int(100 * (sum(NUM_SUBMODULES[0:current_module], cur)/sum(NUM_SUBMODULES)))
