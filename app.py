@@ -85,7 +85,7 @@ def allowed_submodule(module_number, submodule_number):
     or current_user.locked_sub[module_number][submodule_number])
 
 def get_days_left():
-    return datetime.date(2020,5,2) - datetime.date.today()
+    return (datetime.date(2020,5,2) - datetime.date.today()).days
 
 @app.before_request
 def before_request():
