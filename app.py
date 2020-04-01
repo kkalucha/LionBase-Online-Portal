@@ -229,7 +229,9 @@ def submodule(module_number, submodule_number, element):
 def notebook(module_number, submodule_number, element):
     if not allowed_submodule(module_number - 1, submodule_number - 1):
         abort(404)
-    return render_template("notebooks/" + str(module_number) + "_" + str(submodule_number) + "_" + str(element) + ".html")
+    name = str(module_number) + "_" + str(submodule_number) + "_" + str(element) + ".html"
+    client.download_file('portal-notebooks', name, 'templates/notebooks/' + name)
+    return render_template("notebooks/" + name)
 
 @app.route('/complete/<int:module_number>/<int:submodule_number>', methods=['GET','POST'])
 @login_required
