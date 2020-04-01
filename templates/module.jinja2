@@ -47,10 +47,7 @@
     <div class="text-container card-block px-2">
         <p class="card-text" style="font: 14pt">{{submodule['description']}}</p>
 		<div class="margin-md-v">
-            <a href="/modules/{{module['number']}}/{{submodule['number']}}/theory" class="btn btn-primary {{'disabled' if submodule['locked']}}">Theory</a>
-        </div>
-        <div class="margin-md-v">
-            <a href="/modules/{{module['number']}}/{{submodule['number']}}/case" class="btn btn-primary {{'disabled' if submodule['locked']}}">Case</a>
+            <a href="/modules/{{module['number']}}/{{submodule['number']}}/1" class="btn btn-primary {{'disabled' if submodule['locked']}}">Start!</a>
         </div>
     </div>
     {{"<div class='locked-overlay'><i class='fas fa-lock'></i></div>" if submodule['locked']}}
