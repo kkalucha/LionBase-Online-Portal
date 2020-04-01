@@ -28,7 +28,7 @@
 	<div class="limiter">
 		<div class="container-login100" >
 			<div class="wrap-login100 p-t-190 p-b-30">
-				<form class="login100-form validate-form" onsubmit="return validate();">
+				<form class="login100-form validate-form" onsubmit="return false;">
 					<div class="login100-form-avatar">
 						<img src="static/images/logo.png" alt="LOGO">
 					</div>
@@ -129,37 +129,31 @@
 <!--===============================================================================================-->
 	<script src="static/js/main.js"></script>
 
-	<script>
-		function validate(){
-			if($("[name='password']").val()!==$("[name='confirm_password']").val())
-			alert("Passwords must match");
-			return $("[name='password']").val()===$("[name='confirm_password']").val();
-		return false;
-		}
-		</script>
-
   <script>
   $(document).ready(function() {
       $("[name='create']").click(function() {
-          $.ajax({
-              type: 'POST',
-			  	method: 'POST',
-              url: '/signup',
-              data: {
-                  username: $("[name='username']").val(),
-                  password: $("[name='password']").val(),
-                  agreementstatus: $("[name='agreementstatus']").val(),
-                  confirm_password: $("[name='confirm_password']").val(),
-                  program: $("[name='program']").val(),
-                  major: $("[name='major']").val(),
-                  dob: $("[name='dob']").val(),
-                  university: $("[name='university']").val(),
-                  email: $("[name='email']").val(),
-                  lastname: $("[name='lastname']").val(),
-                  firstname: $("[name='firstname']").val(),
-                  username: $("[name='username']").val()
-              },
-			  success : function(response){
+		if ($("[name='password']").val().localeCompare($("[name='confirm_password']").val()) != 0) {
+		  alert("Passwords must match");
+		  return;}
+        $.ajax({
+            type: 'POST',
+			method: 'POST',
+            url: '/signup',
+            data: {
+                username: $("[name='username']").val(),
+                password: $("[name='password']").val(),
+                agreementstatus: $("[name='agreementstatus']").val(),
+                confirm_password: $("[name='confirm_password']").val(),
+                program: $("[name='program']").val(),
+                major: $("[name='major']").val(),
+            	dob: $("[name='dob']").val(),
+                university: $("[name='university']").val(),
+                email: $("[name='email']").val(),
+                lastname: $("[name='lastname']").val(),
+                firstname: $("[name='firstname']").val(),
+                username: $("[name='username']").val()
+            },
+			success : function(response){
 				if (response.errors == null) window.location.href = "/homepage";
 				else alert(response.errors);
 			}

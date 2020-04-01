@@ -13,7 +13,7 @@ class User(UserMixin, db.Model):
     firstname = db.Column(db.String(50))
     lastname = db.Column(db.String(50))
     university = db.Column(db.String(100))
-    dob = db.Column(db.Integer)
+    dob = db.Column(db.Date)
     major = db.Column(db.String(100))
     program = db.Column(db.String(50))
     completed = db.Column(db.ARRAY(db.Boolean(), dimensions=1))
