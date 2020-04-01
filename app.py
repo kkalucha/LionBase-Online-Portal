@@ -97,7 +97,7 @@ def get_user_module(module_number):
         module_dict['comments'] = Comment.query.filter_by(username=current_user.username, module=module_number).all()
     for i in range(NUM_SUBMODULES[module_number]):
         module_dict['submodules'][i]['locked'] = current_user.locked_sub[module_number][i]
-        module_dict['submodules'][i]['currentelement'] = current_user.current_element[module_number][i]
+        module_dict['submodules'][i]['currentelement'] = current_user.current_element[module_number][i] + 1
     return module_dict
 
 def allowed_file(filename):
