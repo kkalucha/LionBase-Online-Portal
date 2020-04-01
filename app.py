@@ -259,7 +259,7 @@ def submit_file(module_number):
     uploaded = Submission(username=current_user.username, module=module_number-1, key=key)
     db.session.add(uploaded)
     db.session.commit()
-    return jsonify({})
+    return render_template('submitted.jinja2')
 
 @app.route('/support', methods=['GET', 'POST'])
 def query():
