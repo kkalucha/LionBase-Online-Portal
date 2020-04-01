@@ -260,9 +260,8 @@ def announcements():
            ]
     return render_template('announcements.jinja2', ann=ann)
 
-'/complete/<int:module_number>/<int:submodule_number>'
-@app.route('/survey', methods=['GET', 'POST'])
-#@login_required
+@app.route('/complete/<int:module_number>/<int:submodule_number>', methods=['GET', 'POST'])
+@login_required
 def survey(module_number, submodule_number):
     if request.method == 'GET':
         return render_template('survey.jinja2', module_number=module_number, submodule_number=submodule_number, success=False, fail=False)
