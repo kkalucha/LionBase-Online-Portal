@@ -303,6 +303,7 @@ def grading():
     student.hascomments[module - 1] = True
     student.locked[module] = False
     student.locked_sub[module][0] = False
+    flag_modified(student, 'hascomments')
     flag_modified(student, 'locked')
     flag_modified(student, 'locked_sub')
     db.session.commit()
