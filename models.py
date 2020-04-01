@@ -71,6 +71,7 @@ class Submission(db.Model):
     module = db.Column(db.Integer)
     key = db.Column(db.String())
     graded = db.Column(db.Boolean())
+    grader = db.Column(db.String())
 
     def __repr__(self):
         return self.key
