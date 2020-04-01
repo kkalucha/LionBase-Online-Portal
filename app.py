@@ -22,7 +22,7 @@ uploads_dir = 'uploads'
 MAX_MODULES = 50
 NUM_MODULES = 2
 MAX_SUBMODULES = 20
-NUM_SUBMODULES = [5, 3, 5, 2, 1]
+NUM_SUBMODULES = [3, 3, 5, 2, 1]
 sender_address = os.environ.get('SENDER_ADDRESS')
 sender_password = os.environ.get('SENDER_PASSWORD')
 receiver_address = os.environ.get('RECEIVER_ADDRESS')
@@ -30,11 +30,9 @@ mail_port = 465
 
 modules = [{"name" : "Analytics", "number" : "1", "description" : "this is the description",
             "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
-            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
-                           {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"},
-                           {"name" : "supervised machine learning", "number" : "3", "description" : "this is third one"},
-                           {"name" : "supervised machine learning", "number" : "4", "description" : "this is fourth one"},
-                           {"name" : "supervised machine learning", "number" : "5", "description" : "this is fifth one"}]},
+            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised", "maxelements":"2"},
+                           {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML", "maxelements":"2"},
+                           {"name" : "supervised machine learning", "number" : "3", "description" : "this is third one","maxelements":"2"}]},
             {"name" : "Analytics", "number" : "2", "description" : "this is the description",
             "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
             "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
@@ -55,9 +53,7 @@ modules = [{"name" : "Analytics", "number" : "1", "description" : "this is the d
             "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
             "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"}]}]
 
-from models import User
-from models import Comment
-from models import Submission
+from models import User, Comment, Submission, Survey, Announcement
 
 def get_user_module(module_number):
     module_dict = copy.deepcopy(modules[module_number])
@@ -67,6 +63,8 @@ def get_user_module(module_number):
         module_dict['comments'] = Comment.query.filter_by(username=current_user.username, module=module_number).all()
     for i in range(NUM_SUBMODULES[module_number]):
         module_dict['submodules'][i]['locked'] = current_user.locked_sub[module_number][i]
+        print(current_user.current_element[2][1])
+        module_dict['submodules'][i]['currentelement'] = current_user.current_element[module_number][i]
     return module_dict
 
 def allowed_file(filename):
@@ -74,6 +72,12 @@ def allowed_file(filename):
 
 def allowed_module(module_number):
     return not (module_number < 0 or module_number > NUM_MODULES - 1 or current_user.locked[module_number])
+
+def get_current_module():
+    i = 0
+    while not current_user.locked[i]:
+        i += 1
+    return i - 1
 
 def allowed_submodule(module_number, submodule_number):
     return not (module_number < 0 or module_number > NUM_MODULES - 1 or submodule_number < 0 or submodule_number > NUM_SUBMODULES[module_number] - 1\
@@ -148,19 +152,20 @@ def register():
 @login_required
 def homepage():
     ann = {"title": "Program Kickoff", "description": "Join us on Zoom for our first bonding event! Meet other students in the program."}
-    module_dict = get_user_module(current_user.current_module)
+    current_module = get_current_module()
+    module_dict = get_user_module(current_module)
     cur = 0
-    for i in range(NUM_SUBMODULES[current_user.current_module]):
+    for i in range(NUM_SUBMODULES[current_module]):
         if module_dict['submodules'][i]['locked']:
             cur = i
             break
-    progress = int(100 * (sum(NUM_SUBMODULES[0:current_user.current_module], cur)/sum(NUM_SUBMODULES)))
+    progress = int(100 * (sum(NUM_SUBMODULES[0:current_module], cur)/sum(NUM_SUBMODULES)))
     prev = None
-    if current_user.current_module > 0:
-        prev = get_user_module(current_user.current_module - 1)
+    if current_module > 0:
+        prev = get_user_module(current_module - 1)
     nex = None
-    if current_user.current_module < NUM_MODULES - 1:
-        nex = get_user_module(current_user.current_module + 1)
+    if current_module < NUM_MODULES - 1:
+        nex = get_user_module(current_module + 1)
     days_left=get_days_left()
     return render_template('homepage.jinja2', ann=ann, progress=progress, prev=prev, curr=module_dict, next=nex, name=current_user.firstname, days_left=days_left)
 
@@ -174,23 +179,23 @@ def modules_route():
 def module(module_number):
     if not allowed_module(module_number - 1):
         abort(404)
-    current_user.current_module = module_number - 1
-    db.session.commit()
     return render_template('module.jinja2', module=get_user_module(module_number - 1))
 
-@app.route('/modules/<int:module_number>/<int:submodule_number>/<kind>')
+@app.route('/modules/<int:module_number>/<int:submodule_number>/<int:element>')
 @login_required
-def submodule(module_number, submodule_number, kind):
+def submodule(module_number, submodule_number, element):
     if not allowed_submodule(module_number - 1, submodule_number - 1):
         abort(404)
-    current_user.current_module = module_number - 1
-    db.session.commit()
-    return render_template('submodule.jinja2', module_number=module_number, submodule_number=submodule_number, kind=kind)
+    current_user.current_element[module_number - 1][submodule - 1] = element - 1
+    return render_template('submodule.jinja2', module_number=module_number, submodule_number=submodule_number, element=element,\
+        maxelements=modules[module_number - 1]['submodules'][submodule_number - 1]['maxelements'])
 
-@app.route('/notebook/<notebook_name>')
+@app.route('/modules/<int:module_number>/<int:submodule_number>/<int:element>/notebook')
 @login_required
-def notebook(notebook_name):
-    return render_template("notebooks/" + notebook_name)
+def notebook(module_number, submodule_number, element):
+    if not allowed_submodule(module_number - 1, submodule_number - 1):
+        abort(404)
+    return render_template("notebooks/" + module_number + "_" + submodule_number + "_" + element + ".html")
 
 @app.route('/complete/<int:module_number>/<int:submodule_number>')
 @login_required
@@ -225,7 +230,7 @@ def submit_file(module_number):
 @app.route('/support', methods=['GET', 'POST'])
 def query():
     if request.method == 'GET':
-        return render_template('formpage.jinja2', success=False, fail=False)
+        return render_template('formpage.jinja2', success=False)
     if request.method == 'POST':
         experience = request.form.get('experience')
         name = request.form.get('name')
@@ -236,28 +241,12 @@ def query():
         with smtplib.SMTP_SSL("smtp.gmail.com", mail_port, context=context) as server:
             server.login(sender_address, sender_password)
             server.sendmail(sender_address, receiver_address, message)
-        return render_template('formpage.jinja2', success=True, fail=False)
+        return render_template('formpage.jinja2', success=True)
 
 @app.route('/announcements')
 @login_required
 def announcements():
-    ann = [
-        {
-            "title": "Program Kickoff",
-            "description": "Join us on Zoom for our first bonding event! Meet other students in the program.",
-            "date": "03/31/2020"
-        },
-        {
-            "title": "Middle Child Announcement",
-            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            "date": "03/20/2020"
-        },
-        {
-            "title": "Earliest Announcement",
-            "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            "date": "03/15/2020"
-        }
-           ]
+    ann = Announcement.query.all()
     return render_template('announcements.jinja2', ann=ann)
 
 @app.errorhandler(404)
