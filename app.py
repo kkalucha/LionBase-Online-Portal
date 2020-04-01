@@ -229,7 +229,7 @@ def submodule(module_number, submodule_number, element):
 def notebook(module_number, submodule_number, element):
     if not allowed_submodule(module_number - 1, submodule_number - 1):
         abort(404)
-    return render_template("notebooks/" + module_number + "_" + submodule_number + "_" + element + ".html")
+    return render_template("notebooks/" + str(module_number) + "_" + str(submodule_number) + "_" + str(element) + ".html")
 
 @app.route('/complete/<int:module_number>/<int:submodule_number>')
 @login_required
