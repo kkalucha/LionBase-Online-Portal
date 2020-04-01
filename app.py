@@ -218,9 +218,11 @@ def module(module_number):
 @app.route('/modules/<int:module_number>/<int:submodule_number>/<int:element>')
 @login_required
 def submodule(module_number, submodule_number, element):
-    if not allowed_submodule(module_number - 1, submodule_number - 1):
+    if not allowed_submodule(module_number - 1, submodule_number - 1) or element > int(modules[module_number - 1]['submodules'][submodule_number - 1]['maxelements']):
         abort(404)
     current_user.current_element[module_number - 1][submodule_number - 1] = element - 1
+    flag_modified(current_user, 'current_element')
+    db.session.commit()
     return render_template('submodule.jinja2', module_number=module_number, submodule_number=submodule_number, currentelement=int(element),\
         maxelements=int(modules[module_number - 1]['submodules'][submodule_number - 1]['maxelements']))
 
