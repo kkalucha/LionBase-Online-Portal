@@ -1,0 +1,58 @@
+{% extends "layout.jinja2" %}
+
+
+<html lang="en">
+    {% block head %}
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% block title %}
+        <title>Survey Submission</title>
+        {% endblock %}
+    </head>
+    {% endblock %}
+
+    {% block content %}
+    <body >
+        <div class="container">
+            <div class="row" style="margin-top:50px;margin-bottom:50px">
+                <div class="col-md-6 col-md-offset-3 form-container">
+                    <h2>Survey</h2>
+                    <p> Please fill out this quick survey. All responses are required but can be as brief as you like.</p>
+                    <form role="form" method="post" id="reused_form">
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label for="q1">What worked well about the theory component of this submodule?</label>
+                                <textarea class="form-control" type="textarea" name="q1" id="q1" placeholder="We'd love to hear from you!" maxlength="6000" rows="3" required></textarea>
+                            </div>
+                            <div class="col-sm-12 form-group">
+                                <label for="q2">What could be improved about the theory component?</label>
+                                <textarea class="form-control" type="textarea" name="q2" id="q2" placeholder="Don't be shy..." maxlength="6000" rows="3" required></textarea>
+                            </div>
+                            <div class="col-sm-12 form-group">
+                                <label for="q3">What worked well about the practical component of this submodule?</label>
+                                <textarea class="form-control" type="textarea" name="q3" id="q3" placeholder="We'd love to hear from you!" maxlength="6000" rows="3" required></textarea>
+                            </div>
+                            <div class="col-sm-12 form-group">
+                                <label for="q4">What could be improved about the practical component?</label>
+                                <textarea class="form-control" type="textarea" name="q4" id="q4" placeholder="Don't be shy..." maxlength="6000" rows="3" required></textarea>
+                            </div>
+                            <div class="col-sm-12 form-group">
+                                <label for="q5">Any feedback on the general functionality of the portal?</label>
+                                <textarea class="form-control" type="textarea" name="q5" id="q5" placeholder="Don't be shy..." maxlength="6000" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <button type="submit" name="submit" id="submit">Submit </button>
+                            </div>
+                        </div>
+                    </form>
+                    {% if fail %}
+                    <div id="error_message" style="width:100%; height:100%; display:none; "> <h3>Error</h3> Sorry, there was an error sending your survey. </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </body>
+    {% endblock %}
+</html>
