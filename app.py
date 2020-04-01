@@ -90,10 +90,6 @@ def get_days_left():
 def before_request():
     session.modified = True
 
-@app.route('/loaderio-431ad4d80f35a76b85139b97d7a69fa4.txt')
-def test():
-    return "loaderio-431ad4d80f35a76b85139b97d7a69fa4"
-
 @app.route('/')
 @app.route('/index')
 def index():
