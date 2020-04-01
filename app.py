@@ -260,11 +260,12 @@ def announcements():
            ]
     return render_template('announcements.jinja2', ann=ann)
 
-@app.route('/complete/<int:module_number>/<int:submodule_number>', methods=['GET', 'POST'])
-@login_required
-def survey():
+'/complete/<int:module_number>/<int:submodule_number>'
+@app.route('/survey', methods=['GET', 'POST'])
+#@login_required
+def survey(module_number, submodule_number):
     if request.method == 'GET':
-        return render_template('survey.jinja2', success=False, fail=False)
+        return render_template('survey.jinja2', module_number=module_number, submodule_number=submodule_number, success=False, fail=False)
     if request.method == 'POST':
         username = request.form.get('username')
         email = request.form.get('email')
@@ -273,7 +274,7 @@ def survey():
         q3 = request.form.get('q3')
         q4 = request.form.get('q4')
 
-        return render_template('survey.jinja2', success=True, fail=False)
+        return render_template('survey.jinja2', module_number=module_number, submodule_number=submodule_number, success=True, fail=False)
 
 @app.errorhandler(404)
 def page_not_found(e):
