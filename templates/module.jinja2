@@ -6,12 +6,37 @@
 
 {% block style %}  
 <style>
+
+.comment-container {
+		position: absolute;
+		top: 0px;
+		right: 10px;
+	}
+	.comment-container i {
+		font-size: 25px;
+		color: white;
+	}
+
+	
+
 </style>
 {% endblock %}
   
 {% block content %}
 <div style="margin: 30px 0px 30px">
     <h3 class="margin-lg-v">Module  {{module['number']}}: {{module['name']}}</h3>
+
+    {% if module['hascomments'] %}
+    <div style="float: right">
+
+        <div class="comment-container">
+	        <button type="button" class="btn btn-lg btn-warning" data-toggle="popover" data-placement="bottom" title="Comments on Assignment" data-content="{{module['comments']}}">
+		        <i class="fas fa-exclamation"></i>
+	        </button>
+        </div>
+    </div>
+
+    {% endif %}
 </div>
 {% for submodule in module['submodules'] %}
 <div class="module card flex-row flex-wrap margin-md-v">
