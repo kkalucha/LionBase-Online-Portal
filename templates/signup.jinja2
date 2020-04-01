@@ -131,7 +131,8 @@
 
 	<script>
 		function validate(){
-			if($("[name='password']").val()===$("[name='confirm_password']").val())alert("Passwords must match");
+			if($("[name='password']").val()!==$("[name='confirm_password']").val())
+			alert("Passwords must match");
 			return $("[name='password']").val()===$("[name='confirm_password']").val();
 		return false;
 		}
@@ -142,7 +143,7 @@
       $("[name='create']").click(function() {
           $.ajax({
               type: 'POST',
-			  method: 'POST',
+			  	method: 'POST',
               url: '/signup',
               data: {
                   username: $("[name='username']").val(),
@@ -158,11 +159,10 @@
                   firstname: $("[name='firstname']").val(),
                   username: $("[name='username']").val()
               },
-			  success:function(response){
+			  success : function(response){
 				if (response.errors == null) window.location.href = "/homepage";
-				else $("[name='firstname']").val("Incorrect username or password");
-				if ($_POST[])
-			  }
+				else alert(response.errors);
+			}
           });
       });
   });
