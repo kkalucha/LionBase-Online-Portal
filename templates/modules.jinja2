@@ -1,0 +1,30 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}
+<title>All Modules</title>
+{% endblock %}
+
+
+{% block style %}
+<style>
+</style>
+{% endblock %}
+
+{% block content %}
+{% for module in all_modules %}
+<div class="module card flex-row flex-wrap margin-md-v">
+	<a name="{{module['number']}}"></a>
+    <div class="thumbnail-container card-header border-0">
+        <img src="/static/images/logo.png">
+    </div>
+    <div class="text-container card-block px-2">
+        <h4 class="card-title">Module {{module['number']}}: {{module['name']}}</h4>
+        <p class="card-text">{{module['description']}}</p>
+		<div class="margin-md-v">
+            <a href="modules/{{module['number']}}" class="btn btn-primary {{'disabled' if module['locked']}}">Get Started</a>
+        </div>
+    </div>
+    {{"<div class='locked-overlay'><i class='fas fa-lock'></i></div>" if module['locked']}}
+</div>
+{% endfor %}
+{% endblock %}

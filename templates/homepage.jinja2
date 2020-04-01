@@ -1,0 +1,119 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}
+<title>Homepage</title>
+{% endblock %}
+
+{% block style %}
+<style>
+	.ann-container {
+		position: absolute; 
+		top: 0px; 
+		right: 10px;
+	}
+	.ann-container i {
+		font-size: 25px;
+		color: white;
+	}
+	.margin-lg-v {
+		margin: 25px 0px 25px;
+	}
+	.center-v {
+		display: inline-flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+	.module img {
+		max-height: 100%;
+		max-width: 100%; 
+	}
+	.card-block {
+		padding: 10px;
+	}
+	.module.curr {
+		box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+		transition: all 0.25s ease-in-out;
+	}
+	.module.curr:hover {
+	  transform: scale(1.01, 1.01);
+	  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+<h3 class="margin-lg-v">Welcome back {{name}}!</h3>
+
+<div class="ann-container">
+	<button type="button" class="btn btn-lg btn-warning" data-toggle="popover" data-placement="bottom" title="{{ann['title']}}" data-content="{{ann['description']}}">
+		<i class="fas fa-bullhorn"></i>
+	</button>
+</div>
+
+<div class="row">
+    <div class="col-12 col-lg-3 center-v">
+    	{% if prev %}
+    	<div>Completed</div>
+      	<div class="module card">
+	        <a name="{{prev['number']}}"></a>
+	        <div class="card-block px-2">
+	            <h4 class="card-title">Module {{prev["number"]}}: {{prev["name"]}}</h4>
+	            <p class="card-text">{{prev["description"]}}</p>
+				<div class="margin-md-v">
+	            	<a href="/modules/{{prev['number']}}" class="btn btn-primary">Get Started</a>
+	            </div>
+	        </div>
+	        <div class="locked-overlay">
+	        </div>
+		</div>
+		{% endif %}
+    </div>
+    <div class="col-12 col-lg-6">
+    	<div class="progress margin-md-v">
+  			<div class="progress-bar" role="progressbar" style="width: {{progress}}%"></div>
+		</div>
+      	<div class="module curr card">
+	        <a name="{{curr['number']}}"></a>
+	        <div class="card-header border-0">
+	            <img src="/static/images/logo.png">
+	        </div>
+	        <div class="card-block px-2">
+	            <h4 class="card-title">Module {{curr['number']}}: {{curr['name']}}</h4>
+	            <p class="card-text">{{curr['description']}}</p>
+				<div class="margin-md-v">
+	            	<a href="/modules/{{curr['number']}}" class="btn btn-primary">Get Started</a>
+	            </div>
+	        </div>
+		</div>
+    </div>
+    <div class="col-12 col-lg-3 center-v">
+    	{% if next %}
+      	<div>Up Next</div>
+      	<div class="module card">
+	        <a name="{{next['number']}}"></a>
+	        <div class="card-block px-2">
+	            <h4 class="card-title">Module {{next['number']}}: {{next['name']}}</h4>
+	            <p class="card-text">{{next['description']}}</p>
+				<div class="margin-md">
+	            	<a href="/modules/{{next['number']}}" class="btn btn-primary">Get Started</a>
+	            </div>
+	        </div>
+	        <div class="locked-overlay">
+	        	<i class='fas fa-lock'></i>
+	        </div>
+		</div>
+		{% endif %}
+    </div>
+</div>
+
+<div style="padding-top: 50px">
+    <div class="card text-center" style="margin: 20px 0px 20px">
+    	<div class="card-body">
+
+    	        <h4 class="card-title">There are {{days_left}} days left until the Open Laptop Test</h4>
+
+    	</div>
+    </div>
+</div>
+
+{% endblock %}
