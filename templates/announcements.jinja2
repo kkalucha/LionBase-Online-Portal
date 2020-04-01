@@ -44,10 +44,10 @@
 {% block content %}
 <h3 class="margin-lg-v">Announcements</h3>
 
-
+{% for announcements in ann %}
 <div class="module card flex-row flex-wrap margin-md-v">
     <div >
-    	{% for announcements in ann %}
+
       	<div >
 	        <div class="card-block px-2" style="margin: 20px 0px 20px">
               <p class="card-text">Published on: {{announcements.date}}</p>
@@ -56,8 +56,8 @@
 		      </div>
         </div>
       </div>
-      {% endfor %}
+      
 </div>
-
+{% endfor %}
 
 {% endblock %}
