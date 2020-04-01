@@ -19,39 +19,136 @@
 	<div class="card-header">
 		Go through this jupyter notebook carefully
 	</div>
+
+	{% if maxelements == 1 %}
 	<div class="card-body">
-	<p class="card-text">
-		Once you are done, click on complete to unlock the next submodule!
-	</p>
-	<div style="float: right">
-	    <a href="/complete/{{module_number}}/{{submodule_number}}" class="btn btn-primary">Mark as Completed</a>
+	    <p class="card-text">
+		    Once you are done, click on Complete to finish this submodule! You will be taken to a short feedback survey
+	    </p>
+	    <div style="float: right">
+	        <a href="/complete/{{module_number}}/{{submodule_number}}" class="btn btn-primary">Complete</a>
+	    </div>
+
+	    <div style="float: left">
+	        <a href="/modules/{{module_number}}/{{submodule_number}}" class="btn btn-primary">Previous</a>
+	    </div>
 	</div>
 
-	<div style="float: left">
-	    <a href="/modules" class="btn btn-primary">Go back to Modules</a>
+	{% elif currentelement == 1 %}
+	<div class="card-body">
+	    <p class="card-text">
+		    Once you are done, click on Next to go to the next segment!
+	    </p>
+	    <div style="float: right">
+	        <a href="/modules/{{module_number}}/{{submodule_number}}/{{{{element_number|int}} + 1}}" class="btn btn-primary">Next</a>
+	    </div>
+
+	    <div style="float: left">
+	        <a href="/modules/{{module_number}}/{{submodule_number}}/{{{{element_number|int}} - 1}}" class="btn btn-primary">Previous</a>
+	    </div>
 	</div>
+
+
+	{% elif currentelement == maxelements %}
+	<div class="card-body">
+	    <p class="card-text">
+		    Once you are done, click on Complete to finish this submodule! You will be taken to a short feedback survey
+	    </p>
+	    <div style="float: right">
+	        <a href="/complete/{{module_number}}/{{submodule_number}}" class="btn btn-primary">Complete</a>
+	    </div>
+
+	    <div style="float: left">
+	        <a href="/modules/{{module_number}}/{{submodule_number}}/{{{{element_number|int}} - 1}}" class="btn btn-primary">Previous</a>
+	    </div>
 	</div>
+
+	{% elif currentelement < maxelements %}
+	   <div class="card-body">
+	        <p class="card-text">
+		       Once you are done, click on Next to go to the next segment!
+	        </p>
+	        <div style="float: right">
+	            <a href="/modules/{{module_number}}/{{submodule_number}}/{{{{element_number|int}} + 1}}" class="btn btn-primary">Next</a>
+	        </div>
+
+	        <div style="float: left">
+	            <a href="/modules/{{module_number}}/{{submodule_number}}/{{{{element_number|int}} - 1}}" class="btn btn-primary">Previous</a>
+	        </div>
+	    </div>
+	{% endif %}
+
 </div>
 
 <div class="embed-responsive embed-responsive-16by9">
 	<iframe src="notebook/"></iframe>
 </div>
 
-<div style="padding-top: 50px">
 <div class="card text-center" style="margin: 20px 0px 20px">
+	<div class="card-header">
+		Go through this jupyter notebook carefully
+	</div>
+
+	{% if maxelements == 1 %}
 	<div class="card-body">
+	    <p class="card-text">
+		    Once you are done, click on Complete to finish this submodule! You will be taken to a short feedback survey
+	    </p>
+	    <div style="float: right">
+	        <a href="/complete/{{module_number}}/{{submodule_number}}" class="btn btn-primary">Complete</a>
+	    </div>
 
-	<div style="float: right">
-	    <a href="/complete/{{module_number}}/{{submodule_number}}" class="btn btn-primary">Mark as Completed</a>
+	    <div style="float: left">
+	        <a href="/modules/{{module_number}}/{{submodule_number}}" class="btn btn-primary">Previous</a>
+	    </div>
 	</div>
 
-	<div style="float: left">
-	    <a href="/modules" class="btn btn-primary">Go back to Modules</a>
+	{% elif currentelement == 1 %}
+	<div class="card-body">
+	    <p class="card-text">
+		    Once you are done, click on Next to go to the next segment!
+	    </p>
+	    <div style="float: right">
+	        <a href="/modules/{{module_number}}/{{submodule_number}}/{{{{element_number|int}} + 1}}" class="btn btn-primary">Next</a>
+	    </div>
+
+	    <div style="float: left">
+	        <a href="/modules/{{module_number}}/{{submodule_number}}/{{{{element_number|int}} - 1}}" class="btn btn-primary">Previous</a>
+	    </div>
 	</div>
 
+
+	{% elif currentelement == maxelements %}
+	<div class="card-body">
+	    <p class="card-text">
+		    Once you are done, click on Complete to finish this submodule! You will be taken to a short feedback survey
+	    </p>
+	    <div style="float: right">
+	        <a href="/complete/{{module_number}}/{{submodule_number}}" class="btn btn-primary">Complete</a>
+	    </div>
+
+	    <div style="float: left">
+	        <a href="/modules/{{module_number}}/{{submodule_number}}/{{{{element_number|int}} - 1}}" class="btn btn-primary">Previous</a>
+	    </div>
 	</div>
+
+	{% elif currentelement < maxelements %}
+	   <div class="card-body">
+	        <p class="card-text">
+		       Once you are done, click on Next to go to the next segment!
+	        </p>
+	        <div style="float: right">
+	            <a href="/modules/{{module_number}}/{{submodule_number}}/{{{{element_number|int}} + 1}}" class="btn btn-primary">Next</a>
+	        </div>
+
+	        <div style="float: left">
+	            <a href="/modules/{{module_number}}/{{submodule_number}}/{{{{element_number|int}} - 1}}" class="btn btn-primary">Previous</a>
+	        </div>
+	    </div>
+	{% endif %}
+
 </div>
-</div>
+
 {% endblock %}
 
 
