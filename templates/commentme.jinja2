@@ -1,0 +1,68 @@
+{% extends "layout.jinja2" %}
+
+
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% block title %}
+        <title>TA Comment Hub</title>
+    {% endblock %}
+
+</head>
+
+{% block style %}
+<style>
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+            <div class="container">
+                <div class="row " style="margin-top: 50px">
+                    <div class="col-md-6 col-md-offset-3 form-container">
+                        <h2>TA Feedback</h2>
+                        <p> Please provide your comments on the indicated assignment below: </p>
+
+                        <form action="/complete" method="post">
+
+
+                            <div class="row">
+                                <div class="col-sm-6 form-group">
+                                    <label for="name"> Name of Student:</label>
+                                    <input type="text" class="form-control" id="username" name="name" required>
+                                </div>
+                                <div class="col-sm-6 form-group">
+                                    <label for="email"> Module Number:</label>
+                                    <input type="number" class="form-control" id="module_number" name="module" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6 form-group">
+                                    <label for="name"> Name of Grader (TA):</label>
+                                    <input type="text" class="form-control" id="TA" name="TA" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label for="comments"> Comments:</label>
+                                    <textarea class="form-control" type="textarea" name="comments" id="comments" placeholder="Your Comments" maxlength="6000" rows="7"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <button type="submit" value="submit" id="submit">Submit </button>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+{% endblock %}
