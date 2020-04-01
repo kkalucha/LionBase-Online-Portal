@@ -289,7 +289,7 @@ def query():
         with smtplib.SMTP_SSL("smtp.gmail.com", mail_port, context=context) as server:
             server.login(sender_address, sender_password)
             server.sendmail(sender_address, receiver_address, message)
-        return render_template('formpage.jinja2', success=True)
+        return render_template('supportsubmitted.jinja2')
 
 @app.route('/announcements')
 @login_required
