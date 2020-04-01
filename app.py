@@ -28,8 +28,8 @@ sender_password = os.environ.get('SENDER_PASSWORD')
 receiver_address = os.environ.get('RECEIVER_ADDRESS')
 mail_port = 465
 
-modules = [{"name" : "Analytics", "number" : "1", "description" : "this is the description",
-            "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
+modules = [{"name" : "Capture, Maintain, Process", "number" : "1", "description" : "this is the description",
+            "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-01/master",
             "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised", "maxelements":"2"},
                            {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML", "maxelements":"2"},
                            {"name" : "supervised machine learning", "number" : "3", "description" : "this is third one","maxelements":"2"}]},
@@ -89,6 +89,10 @@ def get_days_left():
 @app.before_request
 def before_request():
     session.modified = True
+
+@app.route('/loaderio-431ad4d80f35a76b85139b97d7a69fa4.txt')
+def test():
+    return "loaderio-431ad4d80f35a76b85139b97d7a69fa4"
 
 @app.route('/')
 @app.route('/index')
@@ -151,7 +155,7 @@ def register():
 @app.route('/homepage', methods=['GET', 'POST'])
 @login_required
 def homepage():
-    ann = {"title": "Program Kickoff", "description": "Join us on Zoom for our first bonding event! Meet other students in the program."}
+    ann = Announcement.query.all()[-1]
     current_module = get_current_module()
     module_dict = get_user_module(current_module)
     cur = 0
