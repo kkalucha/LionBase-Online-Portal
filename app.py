@@ -296,7 +296,7 @@ def query():
 @app.route('/announcements')
 @login_required
 def announcements():
-    ann = Announcement.query.all()
+    ann = Announcement.query.all().reverse()
     return render_template('announcements.jinja2', ann=ann)
 
 @app.route('/submissions')
