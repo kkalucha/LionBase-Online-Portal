@@ -16,7 +16,7 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_view = 'login'
 
-ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'png', 'txt', 'py', 'ipynb']
+ALLOWED_EXTENSIONS = ['pdf', 'jpg', 'png', 'txt', 'py', 'ipynb', 'html']
 STUDENT_EMAILS = ['wr2314@columbia.edu',\
 'ic2502@columbia.edu',\
 'ws2578@columbia.edu',\
