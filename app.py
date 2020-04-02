@@ -213,6 +213,8 @@ def modules_route():
 def module(module_number):
     if not allowed_module(module_number - 1):
         abort(404)
+    current_user.hascomments[module_number - 1] = False
+    flag_modified(current_user, 'hascomments')
     return render_template('module.jinja2', module=get_user_module(module_number - 1))
 
 @app.route('/modules/<int:module_number>/<int:submodule_number>/<int:element>')
@@ -333,11 +335,12 @@ def grading():
     submission.graded = True
     student = User.query.filter_by(username=username).first()
     student.hascomments[module - 1] = True
-    student.locked[module] = False
-    student.locked_sub[module][0] = False
+    if verdict == 'yes':
+        student.locked[module] = False
+        student.locked_sub[module][0] = False
+        flag_modified(student, 'locked')
+        flag_modified(student, 'locked_sub')
     flag_modified(student, 'hascomments')
-    flag_modified(student, 'locked')
-    flag_modified(student, 'locked_sub')
     db.session.commit()
     return render_template('commentme.jinja2')
 
