@@ -326,6 +326,7 @@ def grading():
     grader = request.form.get('TA')
     module = int(request.form.get('module'))
     comment = request.form.get('comments')
+    verdict = request.form.get('verdict')
     comment = Comment(username=username, comment=comment, module=(module-1))
     db.session.add(comment)
     submission = Submission.query.filter_by(username=username).filter_by(module=module-1).first()
