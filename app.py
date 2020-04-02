@@ -329,10 +329,12 @@ def grading():
     module = int(request.form.get('module'))
     comment = request.form.get('comments')
     verdict = request.form.get('verdict')
+    submission = Submission.query.filter_by(username=username).filter_by(module=module-1).first()
+    if submission is None:
+        return render_template('commentme.jinja2')
+    submission.graded = True
     comment = Comment(username=username, comment=comment, module=(module-1))
     db.session.add(comment)
-    submission = Submission.query.filter_by(username=username).filter_by(module=module-1).first()
-    submission.graded = True
     student = User.query.filter_by(username=username).first()
     student.hascomments[module - 1] = True
     if verdict == 'yes':
