@@ -295,15 +295,41 @@ def query():
             server.sendmail(sender_address, receiver_address, message)
         return render_template('supportsubmitted.jinja2')
 
+@app.route('/create_announcement', methods=['GET', 'POST'])
+@login_required
+def create_announcement():
+    if current_user.email not in TA_EMAILS:
+        abort(404)
+    if request.method == 'GET':
+        return render_template('create_announcement.jinja2')
+    if request.method == 'POST':
+        date = request.form.get('date')
+        title = request.form.get('title')
+        description = request.form.get('description')
+        announcement = Annoncement(date=date, title=title, description = description)
+        db.session.add(announcement)
+        db.session.commit()
+        return render_template('announcementsubmitted.jinja2')
+
 @app.route('/announcements')
 @login_required
 def announcements():
     ann = Announcement.query.all()[::-1]
     return render_template('announcements.jinja2', ann=ann)
 
-@app.route('/submissions')
+'''@app.route('/submissions')
 @login_required
 def submissions():
+    if current_user.email not in TA_EMAILS:
+        abort(404)
+    return render_template('responses.jinja2')'''
+
+#ok so this is kinda confusin but /submissions renders responses.jinja2
+#and /responses renders submissions.jinja 2. aren't we quirky aha ha
+
+@app.route('/responses')
+@login_required
+def responses():
     if current_user.email not in TA_EMAILS:
         abort(404)
     return render_template('submissions.jinja2', all_submissions=Submission.query.all())

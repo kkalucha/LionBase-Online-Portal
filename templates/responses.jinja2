@@ -1,0 +1,19 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}
+<title>Submissions</title>
+{% endblock %}
+
+{% block content %}
+{% for submission in all_submissions %}
+<div class="module card flex-row flex-wrap margin-md-v">
+    {{"<a> GRADED </a>" if submission['graded']}}
+    <div class="text-container card-block px-2">
+        <h4 class="card-title"> {{submission['username']}}: {{submission['module'] + 1}}</h4>
+		<div class="margin-md-v">
+            <a href="/download/{{submission['key']}}" target="_blank" class="btn btn-primary ">Download </a>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

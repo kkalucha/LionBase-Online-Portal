@@ -1,0 +1,58 @@
+{% extends "layout.jinja2" %}
+
+
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% block title %}
+        <title>Announcement Creation Page</title>
+    {% endblock %}
+
+</head>
+
+{% block style %}
+<style>
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+            <div class="container">
+                <div class="row " style="margin-top: 50px">
+                    <div class="col-md-6 col-md-offset-3 form-container">
+                        <h2>New Announcement</h2>
+                        <p> Please fill out the following fields: </p>
+                        <form method="post">
+                            <div class="row">
+                                <div class="col-sm-6 form-group">
+                                    <label for="date"> Date (MM.DD.YYYY):</label>
+                                    <input type="text" class="form-control" id="date" name="date" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 form-group">
+                                    <label for="title"> Announcement title:</label>
+                                    <input type="text" class="form-control" id="title" name="title" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label for="description"> Enter announcement:</label>
+                                    <textarea class="form-control" type="textarea" name="description" id="description" placeholder="Enter body of new announcement" maxlength="6000" rows="7"></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <button type="submit" value="submit" id="submit">Submit </button>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+{% endblock %}
