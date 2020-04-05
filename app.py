@@ -52,9 +52,9 @@ TA_EMAILS = ['logan.troy@columbia.edu',\
 client = boto3.client('s3')
 uploads_dir = 'uploads'
 MAX_MODULES = 50
-NUM_MODULES = 2
+NUM_MODULES = 3
 MAX_SUBMODULES = 20
-NUM_SUBMODULES = [3, 5]
+NUM_SUBMODULES = [3, 5, 2]
 sender_address = os.environ.get('SENDER_ADDRESS')
 sender_password = os.environ.get('SENDER_PASSWORD')
 receiver_address = os.environ.get('RECEIVER_ADDRESS')
@@ -72,13 +72,10 @@ modules = [{"name" : "Capture, Maintain, Process", "number" : "1", "description"
                            {"name" : "Basic Classification", "number" : "3", "description" : "Dive into classification— the process of predicting the class of given data points. You’ll be introduced to logistic regression, linear discriminant analysis, and the k-Nearest Neighbors theory.", "maxelements":"4"},
                            {"name" : "Decision Trees + Random Forest", "number" : "4", "description" : "It’s time to branch out! Learn how to build classification or regression models— in the form of a tree structure.", "maxelements":"2"},
                            {"name" : "Naive Bayes + SVMs", "number" : "5", "description" : "Explore classifiers further, and discover how Support-Vector Machine and Naive Bayes theories can be used to distinctly classify data points.", "maxelements":"3"}]},
-            {"name" : "Analytics", "number" : "3", "description" : "this is the description",
-            "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
-            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
-                           {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"},
-                           {"name" : "supervised machine learning", "number" : "3", "description" : "this is third one"},
-                           {"name" : "supervised machine learning", "number" : "4", "description" : "this is fourth one"},
-                           {"name" : "supervised machine learning", "number" : "5", "description" : "this is fifth one"}]},
+            {"name" : "Analytics - Unsupervised", "number" : "3", "description" : "Welcome to the third module! This module dives into unsupervised analytics — learning the inherent structure of data without using explicitly-provided labels. Put these processes to work and discover the generative features and groupings inherent in a set of examples.",
+            "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-03/master",
+            "submodules": [{"name" : "Clustering", "number" : "1", "description" : "Time to get chunky! Split objects into groups on the basis of similarity and dissimilarity through clustering. Use it to determine the intrinsic groupings among the unlabeled data presented."},
+                           {"name" : "Dimensionality", "number" : "2", "description" : "It is useful to apply a process called dimensionality to highly dimensional data. Learn how this process can be used to reduce the number of features under consideration, where each feature is a dimension that partly represents the objects."}]},
             {"name" : "Analytics", "number" : "4", "description" : "this is the description",
             "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
             "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
