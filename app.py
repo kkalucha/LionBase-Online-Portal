@@ -186,11 +186,11 @@ def homepage():
     current_module = get_current_module()
     module_dict = get_user_module(current_module)
     cur = 0
-    for i in range(NUM_SUBMODULES[current_module]):
-        if module_dict['submodules'][i]['locked'] or i == NUM_SUBMODULES[current_module] - 1:
+    for i in range(NUM_SUBMODULES[current_module] + 1):
+        if i == NUM_SUBMODULES[current_module] or module_dict['submodules'][i]['locked']:
             cur = i
             break
-    progress = int(100 * (sum(NUM_SUBMODULES[0:current_module], cur)/(sum(NUM_SUBMODULES)-1)))
+    progress = int(100 * (sum(NUM_SUBMODULES[0:current_module], cur)/(sum(NUM_SUBMODULES))))
     prev = None
     if current_module > 0:
         prev = get_user_module(current_module - 1)
