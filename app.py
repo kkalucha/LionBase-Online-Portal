@@ -35,7 +35,7 @@ STUDENT_EMAILS = ['wr2314@columbia.edu',\
 'sg3789@columbia.edu',\
 'alt2177@columbia.edu',\
 'yl4095@columbia.edu',\
-'At3456@columbia.edu',\
+'at3456@columbia.edu',\
 'kaan.avci@columbia.edu',\
 'yw3473@columbia.edu',\
 'mac2492@columbia.edu',\
