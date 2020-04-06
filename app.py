@@ -90,8 +90,9 @@ def get_user_module(module_number):
     module_dict = copy.deepcopy(modules[module_number])
     module_dict['locked'] = current_user.locked[module_number]
     module_dict['hascomments'] = current_user.hascomments[module_number]
-    if module_dict['hascomments']:
-        module_dict['comments'] = Comment.query.filter_by(username=current_user.username, module=module_number).all()
+    module_dict['comments'] = Comment.query.filter_by(username=current_user.username, module=module_number).all()
+    if module_dict['comments'] is not None:
+        module_dict['comments'] = ' '.join(map(str, module_dict['comments']))
     for i in range(NUM_SUBMODULES[module_number]):
         module_dict['submodules'][i]['locked'] = current_user.locked_sub[module_number][i]
         module_dict['submodules'][i]['currentelement'] = current_user.current_element[module_number][i] + 1
