@@ -1,0 +1,16 @@
+{% extends "layout.jinja2" %}
+
+{% block title %}
+<title>Survey Submissions</title>
+{% endblock %}
+
+{% block content %}
+{% for subs in surveys %}
+<div class="module card flex-row flex-wrap margin-md-v">
+    <div class="text-container card-block px-2">
+        <h4 class="card-title"> User {{subs['username']}}: {{subs['module'] + 1}}.{{subs['submodule'] + 1}}</h4
+        <p class="card-text">{{subs['responses']}}</p>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
