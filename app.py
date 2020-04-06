@@ -315,20 +315,17 @@ def announcements():
     ann = Announcement.query.all()[::-1]
     return render_template('announcements.jinja2', ann=ann)
 
-@app.route('/submissions')
+@app.route('/surveyresponses')
 @login_required
-def submissions():
+def surveyresponses():
     if current_user.email not in TA_EMAILS:
         abort(404)
     surveys = Survey.query.all()[::-1]
     return render_template('responses.jinja2', surveys = surveys)
 
-#ok so this is kinda confusin but /submissions renders responses.jinja2
-#and /responses renders submissions.jinja 2. aren't we quirky aha ha
-
-@app.route('/responses')
+@app.route('/submissions')
 @login_required
-def responses():
+def submission():
     if current_user.email not in TA_EMAILS:
         abort(404)
     return render_template('submissions.jinja2', all_submissions=Submission.query.all())
