@@ -304,7 +304,7 @@ def create_announcement():
         date = request.form.get('date')
         title = request.form.get('title')
         description = request.form.get('description')
-        announcement = Annoncement(date=date, title=title, description = description)
+        announcement = Announcement(date=date, title=title, description = description)
         db.session.add(announcement)
         db.session.commit()
         return render_template('announcementsubmitted.jinja2')
