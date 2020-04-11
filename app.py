@@ -370,6 +370,12 @@ def grading():
     db.session.commit()
     return render_template('commentme.jinja2')
 
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return render_template('dashboard.jinja2')
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('page-not-found.jinja2')
