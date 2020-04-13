@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.urls import url_parse
 from werkzeug.exceptions import BadRequest
 from config import Config
+from itsdangerous.url_safe import URLSafeTimedSerializer
 import boto3, os, copy, datetime, smtplib, ssl
 
 app = Flask(__name__)
@@ -59,7 +60,7 @@ MAX_SUBMODULES = 20
 NUM_SUBMODULES = [3, 5, 2]
 sender_address = os.environ.get('SENDER_ADDRESS')
 sender_password = os.environ.get('SENDER_PASSWORD')
-receiver_address = os.environ.get('RECEIVER_ADDRESS')
+receiver_address = sender_address
 mail_port = 465
 
 modules = [{"name" : "Capture, Maintain, Process", "number" : "1", "description" : "Welcome! Module 1 dives into the foundations of the data science life cycle. As you progress, you’ll increase your flexibility and understanding to maximize returns at each phase of the process. Let’s get started!",
@@ -369,6 +370,44 @@ def grading():
     flag_modified(student, 'hascomments')
     db.session.commit()
     return render_template('commentme.jinja2')
+
+@app.route('/passwordreset', methods=['GET', 'POST'])
+def passwordreset():
+    token = request.args.get('token')
+    if token is None:
+        if request.method == 'GET':
+            return render_template('passwordresetemail.jinja2')
+        if request.method == 'POST':
+            account_email = request.form.get('email')
+            user = User.query.filter_by(email=account_email).first()
+            if user is not None:
+                s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+                token = s.dumps(user.username)
+                message = "Subject: [Lionbase Portal] Password Reset Request\n\nHi " + user.firstname + ",\n\nA password reset for your LionBase Certificate Program" +\
+                    " account was recently requested. If you made this request, follow this link to finish resetting your password: "+\
+                    "http://lionbase-portal.herokuapp.com/passwordreset?token=" + token + ". This link will expire in 30 minutes. If you did not request this reset, no action is required." +\
+                    "\n\nBest,\nLionBase Certificate Program"
+                context = ssl.create_default_context()
+                with smtplib.SMTP_SSL("smtp.gmail.com", mail_port, context=context) as server:
+                    server.login(sender_address, sender_password)
+                    server.sendmail(sender_address, account_email, message)
+            return render_template('passwordresettokensent.jinja2')
+    if request.method == 'GET':
+        return render_template('passwordresetpassword.jinja2')
+    if request.method == 'POST':
+        s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+        try:
+            password = request.form['password']
+            username = s.loads(token, max_age=1800)
+        except:
+            abort(404)
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            abort(404)
+        user.set_password(password)
+        db.session.commit()
+        login_user(user)
+        return redirect('/homepage')
 
 @app.errorhandler(404)
 def page_not_found(e):
