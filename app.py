@@ -373,6 +373,8 @@ def grading():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    if current_user.email not in TA_EMAILS:
+        abort(404)
     return render_template('dashboard.jinja2')
 
 
