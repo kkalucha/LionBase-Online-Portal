@@ -290,7 +290,7 @@ def query():
         name = request.form.get('name')
         email = request.form.get('email')
         comments = request.form.get('comments')
-        message = "Subject: [Lionbase Portal] [" + experience + "]\n\n" + name + "<" + email + "> : " + comments
+        message = "Subject: [LionBase Portal] [" + experience + "]\n\n" + name + "<" + email + "> : " + comments
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("smtp.gmail.com", mail_port, context=context) as server:
             server.login(sender_address, sender_password)
@@ -311,6 +311,12 @@ def create_announcement():
         announcement = Announcement(date=date, title=title, description = description)
         db.session.add(announcement)
         db.session.commit()
+        message = "Subject: [LionBase Portal] [ANN] " + title + "\n\n" + description + "\n\nBest,\nLionBase Certificate Program Team"
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL("smtp.gmail.com", mail_port, context=context) as server:
+            server.login(sender_address, sender_password)
+            for user in User.query.all():
+                server.sendmail(sender_address, user.email, message)
         return render_template('announcementsubmitted.jinja2')
 
 @app.route('/announcements')
