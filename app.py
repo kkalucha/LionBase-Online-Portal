@@ -59,7 +59,6 @@ MAX_SUBMODULES = 20
 NUM_SUBMODULES = [4, 6, 2]
 sender_address = os.environ.get('SENDER_ADDRESS')
 sender_password = os.environ.get('SENDER_PASSWORD')
-receiver_address = os.environ.get('RECEIVER_ADDRESS')
 mail_port = 465
 
 modules = [{"name" : "Capture, Maintain, Process", "number" : "1", "description" : "Welcome! Module 1 dives into the foundations of the data science life cycle. As you progress, you’ll increase your flexibility and understanding to maximize returns at each phase of the process. Let’s get started!",
@@ -294,7 +293,7 @@ def query():
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("smtp.gmail.com", mail_port, context=context) as server:
             server.login(sender_address, sender_password)
-            server.sendmail(sender_address, receiver_address, message)
+            server.sendmail(sender_address, sender_address, message)
         return render_template('supportsubmitted.jinja2')
 
 @app.route('/create_announcement', methods=['GET', 'POST'])
