@@ -11,7 +11,7 @@ import boto3, os, copy, datetime, smtplib, ssl
 app = Flask(__name__)
 
 app.config.from_object(Config)
-app.permanent_session_lifetime = datetime.timedelta(minutes=30)
+app.permanent_session_lifetime = datetime.timedelta(minutes=120)
 db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_view = 'login'
