@@ -62,23 +62,7 @@ sender_password = os.environ.get('SENDER_PASSWORD')
 receiver_address = os.environ.get('RECEIVER_ADDRESS')
 mail_port = 465
 
-modules = [{"name" : "Capture, Maintain, Process", "number" : "1", "description" : "Welcome! Module 1 dives into the foundations of the data science life cycle. As you progress, you’ll increase your flexibility and understanding to maximize returns at each phase of the process. Let’s get started!",
-            "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-01/master",
-            "submodules": [{"name" : "Using an API", "number" : "1", "description" : "Explore the world of Application Programming Interfaces— an interface that allows your application to interact with external services using simple commands. Harness their power to save time and efficiency.", "maxelements":"2"},
-                           {"name" : "Databases", "number" : "2", "description" : "Databases are organized collections of structured information. Here, you’ll learn how databases can help you access, manage, and update information.", "maxelements":"2"},
-                           {"name" : "Data Quality", "number" : "3", "description" : "Data quality may very well be the single most important component of a data pipeline; without a level of confidence and reliability in your data, analysis generated from the data is near useless.","maxelements":"2"}]},
-            {"name" : "Analytics - Supervised", "number" : "2", "description" : "Welcome to the second module! Dive into supervised analytics, where both input and preferred output are part of the training data. Learn how previously known classifications can be used to train models to correctly label unknown data points.",
-            "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-02/master",
-            "submodules": [{"name" : "Linear Regression", "number" : "1", "description" : "Linear regression is the oldest, simple and widely used supervised machine learning algorithm for predictive analysis. Discover how linear regression is used for finding linear relationships between target and one or more predictors.", "maxelements":"3"},
-                           {"name" : "Model Selection and Assessment", "number" : "2", "description" : "In model selection, we estimate the performance of various competing models with the hopes of choosing the best one. Explore how this model can then be assessed by estimating the prediction error on new data.", "maxelements":"4"},
-                           {"name" : "Basic Classification", "number" : "3", "description" : "Dive into classification— the process of predicting the class of given data points. You’ll be introduced to logistic regression, linear discriminant analysis, and the k-Nearest Neighbors theory.", "maxelements":"4"},
-                           {"name" : "Decision Trees + Random Forest", "number" : "4", "description" : "It’s time to branch out! Learn how to build classification or regression models— in the form of a tree structure.", "maxelements":"2"},
-                           {"name" : "Naive Bayes + SVMs", "number" : "5", "description" : "Explore classifiers further, and discover how Support-Vector Machine and Naive Bayes theories can be used to distinctly classify data points.", "maxelements":"3"}]},
-            {"name" : "Analytics - Unsupervised", "number" : "3", "description" : "Welcome to the third module! This module dives into unsupervised analytics — learning the inherent structure of data without using explicitly-provided labels. Put these processes to work and discover the generative features and groupings inherent in a set of examples.",
-            "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-03/master",
-            "submodules": [{"name" : "Clustering", "number" : "1", "description" : "Time to get chunky! Split objects into groups on the basis of similarity and dissimilarity through clustering. Use it to determine the intrinsic groupings among the unlabeled data presented.", "maxelements":"2"},
-                           {"name" : "Dimensionality", "number" : "2", "description" : "It is useful to apply a process called dimensionality to highly dimensional data. Learn how this process can be used to reduce the number of features under consideration, where each feature is a dimension that partly represents the objects.", "maxelements":"2"}]},
-            ]
+modules = []
 
 
 
