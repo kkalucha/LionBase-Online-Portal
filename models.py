@@ -53,6 +53,30 @@ class Comment(db.Model):
     def __repr__(self):
         return self.comment
 
+class Module(db.Model):
+    __tablename__ = 'modules'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String())
+    number = db.Column(db.String())
+    description = db.Column(db.String())
+    exercise = db.Column(db.String())
+
+    def serialize(self):
+        return {'name':self.name, 'number':self.number, 'description':self.description, 'exercise':self.exercise}
+
+class Submodule(db.Model):
+    __tablename__ = 'submodules'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String())
+    number = db.Column(db.String())
+    description = db.Column(db.String())
+    belongs_to = db.Column(db.String())
+    maxelements = db.Column(db.String())
+
+    def serialize(self):
+        return {'name':self.name, 'number':self.number, 'description':self.description, 'maxelements':self.maxelements}
+
+
 class Survey(db.Model):
     __tablename__ = 'responses'
     id = db.Column(db.Integer, primary_key=True)

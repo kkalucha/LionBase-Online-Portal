@@ -54,9 +54,9 @@ TA_EMAILS = ['logan.troy@columbia.edu',\
 client = boto3.client('s3')
 uploads_dir = 'uploads'
 MAX_MODULES = 50
-NUM_MODULES = 3
+#NUM_MODULES = 3
 MAX_SUBMODULES = 20
-NUM_SUBMODULES = [3, 5, 2]
+NUM_SUBMODULES = []#[3, 5, 2]
 sender_address = os.environ.get('SENDER_ADDRESS')
 sender_password = os.environ.get('SENDER_PASSWORD')
 receiver_address = os.environ.get('RECEIVER_ADDRESS')
@@ -78,15 +78,28 @@ modules = [{"name" : "Capture, Maintain, Process", "number" : "1", "description"
             "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-03/master",
             "submodules": [{"name" : "Clustering", "number" : "1", "description" : "Time to get chunky! Split objects into groups on the basis of similarity and dissimilarity through clustering. Use it to determine the intrinsic groupings among the unlabeled data presented.", "maxelements":"2"},
                            {"name" : "Dimensionality", "number" : "2", "description" : "It is useful to apply a process called dimensionality to highly dimensional data. Learn how this process can be used to reduce the number of features under consideration, where each feature is a dimension that partly represents the objects.", "maxelements":"2"}]},
-            {"name" : "Analytics", "number" : "4", "description" : "this is the description",
-            "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
-            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
-                           {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"}]},
-            {"name" : "Analytics", "number" : "5", "description" : "this is the description",
-            "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
-            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"}]}]
+            ]
 
-from models import User, Comment, Submission, Survey, Announcement
+
+
+from models import User, Comment, Submission, Survey, Announcement, Module, Submodule
+
+modules_from_database = list(map(lambda x: x.serialize(), Module.query.all()))
+
+#go through each module dictionary, add the list of all submodule dictionaries
+#then, append that freshly cooked up module dict to the list of hardcoded modules.
+#when the hardcoded modules are eventually purged, replace them with an empty list
+for mods in modules_from_database:
+    mods['submodules'] = list(map(lambda x: x.serialize(), Submodule.query.filter_by(belongs_to=mods['number'])))
+    modules.append(mods)
+
+
+#update the constant variables
+NUM_MODULES = len(modules)
+
+for mods in modules:
+    num_submods = len(mods['submodules'])
+    NUM_SUBMODULES.append(num_submods)
 
 def get_user_module(module_number):
     module_dict = copy.deepcopy(modules[module_number])
@@ -259,6 +272,41 @@ def complete(module_number, submodule_number):
         flag_modified(current_user, 'locked_sub')
     db.session.commit()
     return redirect('/modules/' + str(module_number))
+
+@app.route('/newmodule', methods=['GET', 'POST'])
+@login_required
+def newmodule():
+    if current_user.email not in TA_EMAILS:
+        abort(404)
+    if request.method == 'GET':
+        return render_template('newmodule.jinja2')
+    if request.method == 'POST':
+        name = request.form.get('name')
+        number = request.form.get('number')
+        description = request.form.get('description')
+        exercise = request.form.get('exercise')
+        module = Module(name = name, number = number, description = description, exercise = exercise)
+        db.session.add(module)
+        db.session.commit()
+        return render_template('newmodulesubmitted.jinja2')
+
+@app.route('/newsubmodule', methods=['GET', 'POST'])
+@login_required
+def newsubmodule():
+    if current_user.email not in TA_EMAILS:
+        abort(404)
+    if request.method == 'GET':
+        return render_template('newsubmodule.jinja2')
+    if request.method == 'POST':
+        name = request.form.get('name')
+        number = request.form.get('number')
+        description = request.form.get('description')
+        belongs_to = request.form.get('belongs_to')
+        maxelements = request.form.get('maxelements')
+        submodule = Submodule(name = name, number = number, description = description, belongs_to = belongs_to, maxelements = maxelements)
+        db.session.add(submodule)
+        db.session.commit()
+        return render_template('newmodulesubmitted.jinja2')
 
 @app.route('/submit/<int:module_number>', methods=['POST'])
 @login_required
