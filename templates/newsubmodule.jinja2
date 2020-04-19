@@ -1,0 +1,70 @@
+{% extends "layout.jinja2" %}
+
+
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% block title %}
+        <title>Submodule Creation Page</title>
+    {% endblock %}
+
+</head>
+
+{% block style %}
+<style>
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+            <div class="container">
+                <div class="row " style="margin-top: 50px">
+                    <div class="col-md-6 col-md-offset-3 form-container">
+                        <h2>New Submodule</h2>
+                        <p> Please fill out the following fields: </p>
+                        <form method="post">
+                            <div class="row">
+                                <div class="col-sm-6 form-group">
+                                    <label for="title"> Submodule Name:</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 form-group">
+                                    <label for="number"> Submodule Number (1, 2, 3, etc):</label>
+                                    <input type="text" class="form-control" id="number" name="number" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label for="description"> Enter description:</label>
+                                    <textarea class="form-control" type="textarea" name="description" id="description" placeholder="Enter description of new module" maxlength="6000" rows="7"></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 form-group">
+                                    <label for="exercise"> Which module number does this submodule belong to?:</label>
+                                    <input type="text" class="form-control" id="belongs_to" name="belongs_to" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 form-group">
+                                    <label for="exercise"> How many pages does this submodule have:</label>
+                                    <input type="text" class="form-control" id="maxelements" name="maxelements" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <button type="submit" value="submit" id="submit">Submit </button>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+{% endblock %}

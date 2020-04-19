@@ -54,50 +54,46 @@ TA_EMAILS = ['logan.troy@columbia.edu',\
 client = boto3.client('s3')
 uploads_dir = 'uploads'
 MAX_MODULES = 50
-NUM_MODULES = 3
+#NUM_MODULES = 3
 MAX_SUBMODULES = 20
-NUM_SUBMODULES = [4, 6, 2]
 sender_address = os.environ.get('SENDER_ADDRESS')
 sender_password = os.environ.get('SENDER_PASSWORD')
 receiver_address = os.environ.get('RECEIVER_ADDRESS')
 mail_port = 465
 
-modules = [{"name" : "Capture, Maintain, Process", "number" : "1", "description" : "Welcome! Module 1 dives into the foundations of the data science life cycle. As you progress, you’ll increase your flexibility and understanding to maximize returns at each phase of the process. Let’s get started!",
-            "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-01/master",
-            "submodules": [{"name" : "Using an API", "number" : "1", "description" : "Explore the world of Application Programming Interfaces— an interface that allows your application to interact with external services using simple commands. Harness their power to save time and efficiency.", "maxelements":"2"},
-                           {"name" : "Databases", "number" : "2", "description" : "Databases are organized collections of structured information. Here, you’ll learn how databases can help you access, manage, and update information.", "maxelements":"2"},
-                           {"name" : "Data Quality", "number" : "3", "description" : "Data quality may very well be the single most important component of a data pipeline; without a level of confidence and reliability in your data, analysis generated from the data is near useless.","maxelements":"2"},
-                           {"name" : "Web Scraping (Optional)", "number" : "4", "description" : "Based on feedback, weve put together a module that walks you through the fundamentals of web scraping. We highlight the key steps using a case study that you can walk through","maxelements":"2"}]},
-            {"name" : "Analytics - Supervised", "number" : "2", "description" : "Welcome to the second module! Dive into supervised analytics, where both input and preferred output are part of the training data. Learn how previously known classifications can be used to train models to correctly label unknown data points.",
-            "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-02/master",
-            "submodules": [{"name" : "Linear Regression", "number" : "1", "description" : "Linear regression is the oldest, simple and widely used supervised machine learning algorithm for predictive analysis. Discover how linear regression is used for finding linear relationships between target and one or more predictors.", "maxelements":"3"},
-                           {"name" : "Model Selection and Assessment", "number" : "2", "description" : "In model selection, we estimate the performance of various competing models with the hopes of choosing the best one. Explore how this model can then be assessed by estimating the prediction error on new data.", "maxelements":"4"},
-                           {"name" : "Basic Classification", "number" : "3", "description" : "Dive into classification— the process of predicting the class of given data points. You’ll be introduced to logistic regression, linear discriminant analysis, and the k-Nearest Neighbors theory.", "maxelements":"4"},
-                           {"name" : "Decision Trees + Random Forest", "number" : "4", "description" : "It’s time to branch out! Learn how to build classification or regression models— in the form of a tree structure.", "maxelements":"2"},
-                           {"name" : "Naive Bayes + SVMs", "number" : "5", "description" : "Explore classifiers further, and discover how Support-Vector Machine and Naive Bayes theories can be used to distinctly classify data points.", "maxelements":"3"},
-                           {"name" : "Optional Review Content", "number" : "6", "description" : "The foundations of machine learning algorithms lie in their statistical and mathematical roots. This module contains introductory content for the relevant background you might need to understand this module well.","maxelements":"3"}]},
-            {"name" : "Analytics - Unsupervised", "number" : "3", "description" : "Welcome to the third module! This module dives into unsupervised analytics — learning the inherent structure of data without using explicitly-provided labels. Put these processes to work and discover the generative features and groupings inherent in a set of examples.",
-            "exercise": "https://mybinder.org/v2/gh/LionBaseNYC/portal-exercise-03/master",
-            "submodules": [{"name" : "Clustering", "number" : "1", "description" : "Time to get chunky! Split objects into groups on the basis of similarity and dissimilarity through clustering. Use it to determine the intrinsic groupings among the unlabeled data presented.", "maxelements":"2"},
-                           {"name" : "Dimensionality", "number" : "2", "description" : "It is useful to apply a process called dimensionality to highly dimensional data. Learn how this process can be used to reduce the number of features under consideration, where each feature is a dimension that partly represents the objects.", "maxelements":"2"}]},
-            {"name" : "Analytics", "number" : "4", "description" : "this is the description",
-            "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
-            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"},
-                           {"name" : "Supervised Machine Learning", "number" : "2", "description" : "this is the second ML"}]},
-            {"name" : "Analytics", "number" : "5", "description" : "this is the description",
-            "exercise": "https://mybinder.org/v2/gist/kkalucha/f9cf740f5371c15163c2229c701891ce/master",
-            "submodules": [{"name" : "Supervised Machine Learning", "number" : "1", "description" : "this is ML but supervised"}]}]
+from models import User, Comment, Submission, Survey, Announcement, Module, Submodule
 
-from models import User, Comment, Submission, Survey, Announcement
+def get_all_modules():
+    modules = []
+    modules_from_database = list(map(lambda x: x.serialize(), Module.query.all()))
+
+    #go through each module dictionary, add the list of all submodule dictionaries
+    #then, append that freshly cooked up module dict to the list of hardcoded modules.
+    #when the hardcoded modules are eventually purged, replace them with an empty list
+    for mods in modules_from_database:
+        mods['submodules'] = list(map(lambda x: x.serialize(), Submodule.query.filter_by(belongs_to=mods['number'])))
+        modules.append(mods)
+    return modules
+
+
+def num_modules():
+    return len(get_all_modules())
+
+def num_submodules():
+    NUM_SUBMODULES = []
+    for mods in get_all_modules():
+        num_submods = len(mods['submodules'])
+        NUM_SUBMODULES.append(num_submods)
+    return NUM_SUBMODULES
 
 def get_user_module(module_number):
-    module_dict = copy.deepcopy(modules[module_number])
+    module_dict = copy.deepcopy(get_all_modules()[module_number])
     module_dict['locked'] = current_user.locked[module_number]
     module_dict['hascomments'] = current_user.hascomments[module_number]
     module_dict['comments'] = Comment.query.filter_by(username=current_user.username, module=module_number).all()
     if module_dict['comments'] is not None:
         module_dict['comments'] = ' '.join(map(str, module_dict['comments']))
-    for i in range(NUM_SUBMODULES[module_number]):
+    for i in range(num_submodules()[module_number]):
         module_dict['submodules'][i]['locked'] = current_user.locked_sub[module_number][i]
         module_dict['submodules'][i]['currentelement'] = current_user.current_element[module_number][i] + 1
     return module_dict
@@ -106,16 +102,16 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def allowed_module(module_number):
-    return not (module_number < 0 or module_number > NUM_MODULES - 1 or current_user.locked[module_number])
+    return not (module_number < 0 or module_number > num_modules() - 1 or current_user.locked[module_number])
 
 def get_current_module():
     i = 0
-    while not current_user.locked[i] and i < NUM_MODULES:
+    while not current_user.locked[i] and i < num_modules():
         i += 1
     return i - 1
 
 def allowed_submodule(module_number, submodule_number):
-    return not (module_number < 0 or module_number > NUM_MODULES - 1 or submodule_number < 0 or submodule_number > NUM_SUBMODULES[module_number] - 1\
+    return not (module_number < 0 or module_number > num_modules() - 1 or submodule_number < 0 or submodule_number > num_submodules()[module_number] - 1\
     or current_user.locked_sub[module_number][submodule_number])
 
 def get_days_left():
@@ -191,16 +187,16 @@ def homepage():
     current_module = get_current_module()
     module_dict = get_user_module(current_module)
     cur = 0
-    for i in range(NUM_SUBMODULES[current_module] + 1):
-        if i == NUM_SUBMODULES[current_module] or module_dict['submodules'][i]['locked']:
+    for i in range(num_submodules()[current_module] + 1):
+        if i == num_submodules()[current_module] or module_dict['submodules'][i]['locked']:
             cur = i
             break
-    progress = int(100 * (sum(NUM_SUBMODULES[0:current_module], cur)/(sum(NUM_SUBMODULES))))
+    progress = int(100 * (sum(num_submodules()[0:current_module], cur)/(sum(num_submodules()))))
     prev = None
     if current_module > 0:
         prev = get_user_module(current_module - 1)
     nex = None
-    if current_module < NUM_MODULES - 1:
+    if current_module < num_modules() - 1:
         nex = get_user_module(current_module + 1)
     days_left=get_days_left()
     return render_template('homepage.jinja2', ann=ann, progress=progress, prev=prev, curr=module_dict, next=nex, name=current_user.firstname, days_left=days_left)
@@ -208,7 +204,7 @@ def homepage():
 @app.route('/modules')
 @login_required
 def modules_route():
-    return render_template('modules.jinja2', all_modules=[get_user_module(i) for i in range(NUM_MODULES)])
+    return render_template('modules.jinja2', all_modules=[get_user_module(i) for i in range(num_modules())])
 
 @app.route('/modules/<int:module_number>')
 @login_required
@@ -222,13 +218,13 @@ def module(module_number):
 @app.route('/modules/<int:module_number>/<int:submodule_number>/<int:element>')
 @login_required
 def submodule(module_number, submodule_number, element):
-    if not allowed_submodule(module_number - 1, submodule_number - 1) or element > int(modules[module_number - 1]['submodules'][submodule_number - 1]['maxelements']):
+    if not allowed_submodule(module_number - 1, submodule_number - 1) or element > int(get_all_modules()[module_number - 1]['submodules'][submodule_number - 1]['maxelements']):
         abort(404)
     current_user.current_element[module_number - 1][submodule_number - 1] = element - 1
     flag_modified(current_user, 'current_element')
     db.session.commit()
     return render_template('submodule.jinja2', module_number=module_number, submodule_number=submodule_number, currentelement=int(element),\
-        maxelements=int(modules[module_number - 1]['submodules'][submodule_number - 1]['maxelements']))
+        maxelements=int(get_all_modules()[module_number - 1]['submodules'][submodule_number - 1]['maxelements']))
 
 @app.route('/modules/<int:module_number>/<int:submodule_number>/<int:element>/notebook')
 @login_required
@@ -256,11 +252,46 @@ def complete(module_number, submodule_number):
     survey = Survey(username=current_user.username, module=module_number - 1, submodule=submodule_number - 1,\
         responses=[q1] + [q2] + [q3] + [q4] + [q5])
     db.session.add(survey)
-    if submodule_number < NUM_SUBMODULES[module_number - 1]:
+    if submodule_number < num_submodules()[module_number - 1]:
         current_user.locked_sub[module_number - 1][submodule_number] = False
         flag_modified(current_user, 'locked_sub')
     db.session.commit()
     return redirect('/modules/' + str(module_number))
+
+@app.route('/newmodule', methods=['GET', 'POST'])
+@login_required
+def newmodule():
+    if current_user.email not in TA_EMAILS:
+        abort(404)
+    if request.method == 'GET':
+        return render_template('newmodule.jinja2')
+    if request.method == 'POST':
+        name = request.form.get('name')
+        number = request.form.get('number')
+        description = request.form.get('description')
+        exercise = request.form.get('exercise')
+        module = Module(name = name, number = number, description = description, exercise = exercise)
+        db.session.add(module)
+        db.session.commit()
+        return render_template('newmodulesubmitted.jinja2')
+
+@app.route('/newsubmodule', methods=['GET', 'POST'])
+@login_required
+def newsubmodule():
+    if current_user.email not in TA_EMAILS:
+        abort(404)
+    if request.method == 'GET':
+        return render_template('newsubmodule.jinja2')
+    if request.method == 'POST':
+        name = request.form.get('name')
+        number = request.form.get('number')
+        description = request.form.get('description')
+        belongs_to = request.form.get('belongs_to')
+        maxelements = request.form.get('maxelements')
+        submodule = Submodule(name = name, number = number, description = description, belongs_to = belongs_to, maxelements = maxelements)
+        db.session.add(submodule)
+        db.session.commit()
+        return render_template('newmodulesubmitted.jinja2')
 
 @app.route('/submit/<int:module_number>', methods=['POST'])
 @login_required
