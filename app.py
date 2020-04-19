@@ -56,43 +56,49 @@ uploads_dir = 'uploads'
 MAX_MODULES = 50
 #NUM_MODULES = 3
 MAX_SUBMODULES = 20
-NUM_SUBMODULES = []#[3, 5, 2]
+
 sender_address = os.environ.get('SENDER_ADDRESS')
 sender_password = os.environ.get('SENDER_PASSWORD')
 receiver_address = os.environ.get('RECEIVER_ADDRESS')
 mail_port = 465
 
-modules = []
+
 
 
 
 from models import User, Comment, Submission, Survey, Announcement, Module, Submodule
 
-modules_from_database = list(map(lambda x: x.serialize(), Module.query.all()))
+def get_all_modules():
+    modules = []
+    modules_from_database = list(map(lambda x: x.serialize(), Module.query.all()))
 
-#go through each module dictionary, add the list of all submodule dictionaries
-#then, append that freshly cooked up module dict to the list of hardcoded modules.
-#when the hardcoded modules are eventually purged, replace them with an empty list
-for mods in modules_from_database:
-    mods['submodules'] = list(map(lambda x: x.serialize(), Submodule.query.filter_by(belongs_to=mods['number'])))
-    modules.append(mods)
+    #go through each module dictionary, add the list of all submodule dictionaries
+    #then, append that freshly cooked up module dict to the list of hardcoded modules.
+    #when the hardcoded modules are eventually purged, replace them with an empty list
+    for mods in modules_from_database:
+        mods['submodules'] = list(map(lambda x: x.serialize(), Submodule.query.filter_by(belongs_to=mods['number'])))
+        modules.append(mods)
+    return modules
 
 
-#update the constant variables
-NUM_MODULES = len(modules)
+def num_modules():
+    return len(get_all_modules())
 
-for mods in modules:
-    num_submods = len(mods['submodules'])
-    NUM_SUBMODULES.append(num_submods)
+def num_submodules():
+    NUM_SUBMODULES = []
+    for mods in get_all_modules():
+        num_submods = len(mods['submodules'])
+        NUM_SUBMODULES.append(num_submods)
+    return NUM_SUBMODULES
 
 def get_user_module(module_number):
-    module_dict = copy.deepcopy(modules[module_number])
+    module_dict = copy.deepcopy(get_all_modules()[module_number])
     module_dict['locked'] = current_user.locked[module_number]
     module_dict['hascomments'] = current_user.hascomments[module_number]
     module_dict['comments'] = Comment.query.filter_by(username=current_user.username, module=module_number).all()
     if module_dict['comments'] is not None:
         module_dict['comments'] = ' '.join(map(str, module_dict['comments']))
-    for i in range(NUM_SUBMODULES[module_number]):
+    for i in range(num_submodules()[module_number]):
         module_dict['submodules'][i]['locked'] = current_user.locked_sub[module_number][i]
         module_dict['submodules'][i]['currentelement'] = current_user.current_element[module_number][i] + 1
     return module_dict
@@ -101,16 +107,16 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def allowed_module(module_number):
-    return not (module_number < 0 or module_number > NUM_MODULES - 1 or current_user.locked[module_number])
+    return not (module_number < 0 or module_number > num_modules() - 1 or current_user.locked[module_number])
 
 def get_current_module():
     i = 0
-    while not current_user.locked[i] and i < NUM_MODULES:
+    while not current_user.locked[i] and i < num_modules():
         i += 1
     return i - 1
 
 def allowed_submodule(module_number, submodule_number):
-    return not (module_number < 0 or module_number > NUM_MODULES - 1 or submodule_number < 0 or submodule_number > NUM_SUBMODULES[module_number] - 1\
+    return not (module_number < 0 or module_number > num_modules() - 1 or submodule_number < 0 or submodule_number > num_submodules()[module_number] - 1\
     or current_user.locked_sub[module_number][submodule_number])
 
 def get_days_left():
@@ -186,16 +192,16 @@ def homepage():
     current_module = get_current_module()
     module_dict = get_user_module(current_module)
     cur = 0
-    for i in range(NUM_SUBMODULES[current_module] + 1):
-        if i == NUM_SUBMODULES[current_module] or module_dict['submodules'][i]['locked']:
+    for i in range(num_submodules()[current_module] + 1):
+        if i == num_submodules()[current_module] or module_dict['submodules'][i]['locked']:
             cur = i
             break
-    progress = int(100 * (sum(NUM_SUBMODULES[0:current_module], cur)/(sum(NUM_SUBMODULES))))
+    progress = int(100 * (sum(num_submodules()[0:current_module], cur)/(sum(num_submodules()))))
     prev = None
     if current_module > 0:
         prev = get_user_module(current_module - 1)
     nex = None
-    if current_module < NUM_MODULES - 1:
+    if current_module < num_modules() - 1:
         nex = get_user_module(current_module + 1)
     days_left=get_days_left()
     return render_template('homepage.jinja2', ann=ann, progress=progress, prev=prev, curr=module_dict, next=nex, name=current_user.firstname, days_left=days_left)
@@ -203,7 +209,7 @@ def homepage():
 @app.route('/modules')
 @login_required
 def modules_route():
-    return render_template('modules.jinja2', all_modules=[get_user_module(i) for i in range(NUM_MODULES)])
+    return render_template('modules.jinja2', all_modules=[get_user_module(i) for i in range(num_modules())])
 
 @app.route('/modules/<int:module_number>')
 @login_required
@@ -217,13 +223,13 @@ def module(module_number):
 @app.route('/modules/<int:module_number>/<int:submodule_number>/<int:element>')
 @login_required
 def submodule(module_number, submodule_number, element):
-    if not allowed_submodule(module_number - 1, submodule_number - 1) or element > int(modules[module_number - 1]['submodules'][submodule_number - 1]['maxelements']):
+    if not allowed_submodule(module_number - 1, submodule_number - 1) or element > int(get_all_modules()[module_number - 1]['submodules'][submodule_number - 1]['maxelements']):
         abort(404)
     current_user.current_element[module_number - 1][submodule_number - 1] = element - 1
     flag_modified(current_user, 'current_element')
     db.session.commit()
     return render_template('submodule.jinja2', module_number=module_number, submodule_number=submodule_number, currentelement=int(element),\
-        maxelements=int(modules[module_number - 1]['submodules'][submodule_number - 1]['maxelements']))
+        maxelements=int(get_all_modules()[module_number - 1]['submodules'][submodule_number - 1]['maxelements']))
 
 @app.route('/modules/<int:module_number>/<int:submodule_number>/<int:element>/notebook')
 @login_required
@@ -251,7 +257,7 @@ def complete(module_number, submodule_number):
     survey = Survey(username=current_user.username, module=module_number - 1, submodule=submodule_number - 1,\
         responses=[q1] + [q2] + [q3] + [q4] + [q5])
     db.session.add(survey)
-    if submodule_number < NUM_SUBMODULES[module_number - 1]:
+    if submodule_number < num_submodules()[module_number - 1]:
         current_user.locked_sub[module_number - 1][submodule_number] = False
         flag_modified(current_user, 'locked_sub')
     db.session.commit()
