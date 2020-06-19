@@ -44,6 +44,13 @@ STUDENT_EMAILS = ['wr2314@columbia.edu',\
 'kak2240@columbia.edu',\
 'fbb2117@columbia.edu',\
 'jam2454@columbia.edu',\
+'kchhsieh@ucdavis.edu',\
+'anyas@princeton.edu',\
+'hc20@princeton.edu',\
+'zeba.huque@yahoo.com',\
+'yh3137@columbia.edu',\
+'lin.jiang@columbia.edu',\
+'esu@berkeley.edu',\
 'mdl2175@columbia.edu']
 TA_EMAILS = ['logan.troy@columbia.edu',\
 'ketan.jog@lionbase.nyc',\
