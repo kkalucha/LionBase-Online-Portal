@@ -26,7 +26,7 @@ class User(UserMixin, db.Model):
         super(User, self).__init__(**kwargs)
         self.completed = [False] * MAX_MODULES
         self.locked = [False] * MAX_MODULES
-        self.locked_sub = [ ([False] + [True] * (MAX_SUBMODULES - 1)) ] * MAX_MODULES
+        self.locked_sub = [ [False] * MAX_SUBMODULES ] * MAX_MODULES
         self.hascomments = [False] * MAX_MODULES
         self.current_element = [[0] * MAX_SUBMODULES] * MAX_MODULES
 
